@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "aurelia-dependency-injection": "^1.4.2",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "tslib": "^1.9.3"
   }
 }
