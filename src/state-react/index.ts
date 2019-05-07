@@ -1,3 +1,4 @@
+export * from './Compose';
 export * from './InjectArray';
 export * from './InjectFocus';
 export * from './InjectHover';
