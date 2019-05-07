@@ -5,6 +5,7 @@
         "target": "es5",
         "jsx": "react",
         "moduleResolution": "node",
+        "module": "esnext",
         "allowJs": true,
         "noImplicitAny": false,
         "lib": [

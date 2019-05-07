@@ -5,155 +5,174 @@ interface IContainerConfiguration {
   debug?: boolean
 }
 
-export class Container extends AureliaContainer {
+export class Container {
+  private debug: boolean;
+  private parent?: Container;
+  private wrappedContainer: AureliaContainer;
+  private configuration: IContainerConfiguration;
+
   constructor(configuration: IContainerConfiguration = {}) {
     const { debug = false, ...superConfiguration } = configuration;
-    super(superConfiguration);
 
-    /**
-     * Ensure keys requested in a child container use dependencies from that child container (or a parent that is not the root) if available
-     * Contrast with the key being resolved in the root and NOT using a dependency from the child container where it was requested
-     * For example in a container hierarchy c1 -> c2 (where c2 is a child of c1)
-     * Given a key A depends on key B
-     * And c2 knows how to resolve B
-     * Then c2.get(A) should use the B from c2 and NOT a B from the root
-     * Current implementation is to ensure that A gets auto registered in the same container where we find the dependency, then we can just proceed with normal resolution (super.get(A))
-     */
-    this.get = key => {
-      const depGraph = buildDepGraph(key);
+    this.debug = debug;
+    this.wrappedContainer = new AureliaContainer(superConfiguration);
+    this.configuration = configuration;
+  }
 
-      if (debug) {
-        console.log(JSON.stringify({
-          depth: getContainerDepth(this),
-          key: key.name,
-          depGraph: (function recursivelyFormatDepGraph(nodes) {
-            return nodes.map(
-              ({ key, resolvingContainer, deps }) => ({
-                keyName: key.name,
-                depth: getContainerDepth(resolvingContainer),
-                deps: recursivelyFormatDepGraph(deps)
-              })
-            );
-          })(depGraph)
-        }, null, 2));
-      }
+  /**
+   * Ensure keys requested in a child container use dependencies from that child container (or a parent that is not the root) if available
+   * Contrast with the key being resolved in the root and NOT using a dependency from the child container where it was requested
+   * For example in a container hierarchy c1 -> c2 (where c2 is a child of c1)
+   * Given a key A depends on key B
+   * And c2 knows how to resolve B
+   * Then c2.get(A) should use the B from c2 and NOT a B from the root
+   * Current implementation is to ensure that A gets auto registered in the same container where we find the dependency, then we can just proceed with normal resolution (super.get(A))
+   */
+  get = key => {
+    if (key === Container) {
+      return this;
+    }
 
-      autoRegisterDependencies(depGraph);
+    const depGraph = this.buildDepGraph(key);
 
-      return super.get(key);
-    };
+    if (this.debug) {
+      console.log(JSON.stringify({
+        depth: this.getContainerDepth(this),
+        key: key.name,
+        depGraph: (function recursivelyFormatDepGraph(nodes) {
+          return nodes.map(
+            ({ key, resolvingContainer, deps }) => ({
+              keyName: key.name,
+              depth: this.getContainerDepth(resolvingContainer),
+              deps: recursivelyFormatDepGraph(deps)
+            })
+          );
+        })(depGraph)
+      }, null, 2));
+    }
 
-    const buildDepGraph = key => {
-      return (function recursivelyBuildGraph(keys) {
-        return keys.map(
-          key => {
-            const resolvingContainer = getContainerWithResolver(key);
-            const isResolvedSingleton = isAlreadyResolvedSingleton({ key, resolvingContainer });
-            return {
-              key,
-              resolvingContainer,
-              isResolvedSingleton,
-              // Dont look any further in the graph
-              deps: isResolvedSingleton ? [] : recursivelyBuildGraph(getDependencies(key))
-            }
+    this.autoRegisterDependencies(depGraph);
+
+    return this.wrappedContainer.get(key);
+  };
+
+  autoRegister = key => this.wrappedContainer.autoRegister(key);
+  registerInstance = (key, instance) => this.wrappedContainer.registerInstance(key, instance);
+  getResolver = (key) => this.wrappedContainer.getResolver(key);
+
+  private buildDepGraph = key => {
+    let recursivelyBuildGraph = (keys) => {
+      return keys.map(
+        key => {
+          const resolvingContainer = this.getContainerWithResolver(key);
+          const isResolvedSingleton = this.isAlreadyResolvedSingleton({ key, resolvingContainer });
+          return {
+            key,
+            resolvingContainer,
+            isResolvedSingleton,
+            // Dont look any further in the graph
+            deps: isResolvedSingleton ? [] : recursivelyBuildGraph(getDependencies(key))
           }
-        )
-      })([key])
+        }
+      )
     };
+    return (recursivelyBuildGraph)([key])
+  };
 
-    const AURELIA_STRATEGY_RESOLVER_INSTANCE_STRATEGY = 0;
-    const isAlreadyResolvedSingleton = ({ key, resolvingContainer }) =>
-      Boolean(resolvingContainer) &&
-      resolvingContainer.getResolver(key).strategy === AURELIA_STRATEGY_RESOLVER_INSTANCE_STRATEGY;
+  private AURELIA_STRATEGY_RESOLVER_INSTANCE_STRATEGY = 0;
+  private isAlreadyResolvedSingleton = ({ key, resolvingContainer }) =>
+    Boolean(resolvingContainer) &&
+    resolvingContainer.getResolver(key).strategy === this.AURELIA_STRATEGY_RESOLVER_INSTANCE_STRATEGY;
 
-    const autoRegisterDependencies = depGraph => {
-      (function recursivelyAutoRegister(nodes) {
-        nodes.forEach(
-          node => {
-            if (node.isResolvedSingleton) {
-              return;
-            }
-
-            if (node.deps.length === 0) {
-              return;
-            }
-
-            const nodeContainerDepth = getContainerDepth(node.resolvingContainer);
-            const { depth: deepestDependencyDepth, deepest } = getDeepestDependency(node);
-            if (deepestDependencyDepth > nodeContainerDepth) {
-              deepest.resolvingContainer.autoRegister(node.key);
-            }
-            recursivelyAutoRegister(node.deps);
+  private autoRegisterDependencies = depGraph => {
+    let recursivelyAutoRegister = (nodes) => {
+      nodes.forEach(
+        node => {
+          if (node.isResolvedSingleton) {
+            return;
           }
-        );
-      })(depGraph);
-    };
 
-    const getFlatDependencies = node => {
-      return (function recursivelyGetFlatDependencies(nodes, all) {
-        nodes.forEach(
-          node => {
-            all.push(node);
-            recursivelyGetFlatDependencies(node.deps, all);
+          if (node.deps.length === 0) {
+            return;
           }
-        );
-        return all;
-      })(node.deps, [])
-    };
 
-    const getDeepestDependency = node => {
-      const flatDependencies = getFlatDependencies(node);
-      let depth, deepest;
-      flatDependencies.forEach(
-        depNode => {
-          const depDepth = getContainerDepth(depNode.resolvingContainer);
-          if (!depth || depDepth > depth) {
-            depth = depDepth;
-            deepest = depNode;
+          const nodeContainerDepth = this.getContainerDepth(node.resolvingContainer);
+          const { depth: deepestDependencyDepth, deepest } = this.getDeepestDependency(node);
+          if (deepestDependencyDepth > nodeContainerDepth) {
+            deepest.resolvingContainer.autoRegister(node.key);
           }
+          recursivelyAutoRegister(node.deps);
         }
       );
+    };
+    (recursivelyAutoRegister)(depGraph);
+  };
 
-      return { depth, deepest };
-    }
-
-    const getContainerWithResolver = key => {
-      return (function recursivelyGetContainerWithResolver(container) {
-        if (container.hasResolver(key)) {
-          return container;
+  private getFlatDependencies = node => {
+    return (function recursivelyGetFlatDependencies(nodes, all) {
+      nodes.forEach(
+        node => {
+          all.push(node);
+          recursivelyGetFlatDependencies(node.deps, all);
         }
+      );
+      return all;
+    })(node.deps, [])
+  };
 
-        if (container.parent) {
-          return recursivelyGetContainerWithResolver((container as any).parent);
+  private getDeepestDependency = node => {
+    const flatDependencies = this.getFlatDependencies(node);
+    let depth, deepest;
+    flatDependencies.forEach(
+      depNode => {
+        const depDepth = this.getContainerDepth(depNode.resolvingContainer);
+        if (!depth || depDepth > depth) {
+          depth = depDepth;
+          deepest = depNode;
         }
+      }
+    );
 
-        return null;
-      })(this);
-    }
+    return { depth, deepest };
+  }
 
-    const getContainerDepth = container => {
-      let depth = 0;
-      let currentContainer = container;
-
-      while (currentContainer && currentContainer.parent) {
-        depth++;
-        currentContainer = currentContainer.parent;
+  private getContainerWithResolver = key => {
+    return (function recursivelyGetContainerWithResolver(container) {
+      if (container.hasResolver(key)) {
+        return container;
       }
 
-      return depth;
+      if (container.parent) {
+        return recursivelyGetContainerWithResolver((container as any).parent);
+      }
+
+      return null;
+    })(this);
+  }
+
+  hasResolver = key => this.wrappedContainer.hasResolver(key);
+
+  private getContainerDepth = container => {
+    let depth = 0;
+    let currentContainer = container;
+
+    while (currentContainer && currentContainer.parent) {
+      depth++;
+      currentContainer = currentContainer.parent;
     }
 
-    /**
-     * Ensure createChild returns an instance of our new Container and not the base container
-     */
-    this.createChild = () => {
-      let child = new Container(configuration);
-      child.root = this.root;
-      child.parent = this;
-      return child;
-    };
+    return depth;
+  };
 
-  }
+  /**
+   * Ensure createChild returns an instance of our new Container and not the base container
+   */
+  createChild = () => {
+    let child = new Container(this.configuration);
+    child.parent = this;
+
+    return child;
+  };
 
 }
 
