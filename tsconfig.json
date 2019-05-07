@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "./dist/",
+        "target": "es5",
+        "jsx": "react",
+        "moduleResolution": "node",
+        "allowJs": true,
+        "noImplicitAny": false,
+        "lib": [
+            "es6",
+            "dom"
+        ]
+    }
+}
