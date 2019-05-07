@@ -3,6 +3,7 @@ import { DependencyContainerReactContext } from './DependencyContainerReactConte
 import { Container } from '../ioc';
 
 interface DependencyContainerContextProps {
+  container?: Container,
   children: React.ReactNode
 }
 
@@ -20,18 +21,30 @@ export abstract class DependencyContainerContext extends React.Component<Depende
   }
 
   async componentDidMount() {
-    if (!this.containerMounted) {
+    // If you didnt provide your own container and you didnt implement containerMounted then you are just creating an empty child container
+    // Which is likely a mistake (forgetting to implement containedMounted), so throw
+    if (!this.props.container && !this.containerMounted) {
       throw new Error((this.constructor as any).name + ' must implement containerMounted');
     }
 
-    if (this.context.container) {
+    // Use the provided container
+    if (this.props.container) {
+      this.container = this.props.container;
+    }
+
+    // Otherwise create a child container
+    else if (this.context.container) {
       this.container = this.context.container.createChild();
     }
+
+    // Otherwise create a new top-level container
     else {
       this.container = new Container();
     }
 
-    await this.containerMounted(this.container);
+    if (this.containerMounted) {
+      await this.containerMounted(this.container);
+    }
 
     this.setState({ doneInjecting: true });
   }
