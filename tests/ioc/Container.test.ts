@@ -20,6 +20,21 @@ describe('Container', () => {
 
   describe('Resolving dependencies in a child container', () => {
 
+    it('should resolve in the child container if the requested key is already in the child container', () => {
+      const parentContainer = new Container();
+      const childContainer = parentContainer.createChild();
+
+      // Add a dependency to the child container
+      const childServiceConfig = { version: 'Child Version' };
+      childContainer.registerInstance(ServiceConfig, childServiceConfig);
+
+      // Ask the child to resolve something that depends on the service we just registered
+      const instance = childContainer.get(ServiceConfig);
+
+      // It should have used the dependency we registered
+      assert.ok(instance === childServiceConfig);
+    });
+
     it('should resolve in the child container if the requested key has a dependency that is already in the child container', () => {
       const parentContainer = new Container();
       const childContainer = parentContainer.createChild();
