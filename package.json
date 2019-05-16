@@ -22,7 +22,7 @@
     "typescript": "^3.4.5"
   },
   "peerDependencies": {
-    "react": "^16.8.6"
+    "react": "^16.3"
   },
   "dependencies": {
     "aurelia-dependency-injection": "^1.4.2",
