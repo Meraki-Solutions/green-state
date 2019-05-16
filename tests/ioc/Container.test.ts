@@ -50,6 +50,24 @@ describe('Container', () => {
       assert.ok(instance.config === childServiceConfig);
     });
 
+    it('should resolve in the child container if there is an instance in the container even if there is also one in the parent', () => {
+      const parentContainer = new Container();
+      const childContainer = parentContainer.createChild();
+
+      // Add a dependency to the parent container
+      const parentServiceConfig = { version: 'Parent Version' };
+      parentContainer.registerInstance(ServiceConfig, parentServiceConfig);
+
+      // Add a dependency to the child container
+      childContainer.autoRegister(ServiceConfig);
+
+      // Ask the child to resolve something that depends on the service we just registered
+      const instance = childContainer.get(ServiceConfig);
+
+      // It should have used the dependency we registered
+      assert.ok(instance !== parentServiceConfig);
+    });
+
     it('should resolve in the parent container if the request key has a dependency in the parent container', () => {
       const parentContainer = new Container();
       const childContainer = parentContainer.createChild();
