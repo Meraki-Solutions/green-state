@@ -20,6 +20,7 @@ export class Container {
 
     // Ensure that any resolution of Container inside the wrapped container gives us this one
     this.wrappedContainer.registerInstance(Container, this);
+    this.parent = null;
   }
 
   /**
@@ -55,6 +56,10 @@ export class Container {
     }
 
     this.autoRegisterDependencies(depGraph);
+
+    if (!this.wrappedContainer.hasResolver(key) && this.parent) {
+      return this.parent.get(key);
+    }
 
     return this.wrappedContainer.get(key);
   };

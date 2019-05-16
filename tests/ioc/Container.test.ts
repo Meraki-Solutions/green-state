@@ -35,6 +35,18 @@ describe('Container', () => {
       assert.ok(instance.config === childServiceConfig);
     });
 
+    it('should resolve in the parent container if the request key has a dependency in the parent container', () => {
+      const parentContainer = new Container();
+      const childContainer = parentContainer.createChild();
+      const config = new ServiceConfig();
+      parentContainer.registerInstance(ServiceConfig, config);
+
+      // Ask the child to resolve something that already exists in the parent
+      const instance = childContainer.get(ServiceConfig);
+
+      assert.ok(instance === config);
+    });
+
   });
 
   /**
