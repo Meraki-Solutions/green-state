@@ -15,8 +15,11 @@ export class Container {
     const { debug = false, ...superConfiguration } = configuration;
 
     this.debug = debug;
-    this.wrappedContainer = new AureliaContainer(superConfiguration);
     this.configuration = configuration;
+    this.wrappedContainer = new AureliaContainer(superConfiguration);
+
+    // Ensure that any resolution of Container inside the wrapped container gives us this one
+    this.wrappedContainer.registerInstance(Container, this);
   }
 
   /**

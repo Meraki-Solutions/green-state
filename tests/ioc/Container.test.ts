@@ -37,4 +37,36 @@ describe('Container', () => {
 
   });
 
+  /**
+   * Note this is a regression test
+   * Since our container proxied to the wrapped container
+   * If it was asked for A, it would ask the wrapped container for A's dependencies
+   * If A depended on Container, it would end up with an instance of the wrapped container which would be missing the correct resolution logic
+   * Fixes bugs here https://github.com/symbioticlabs/scrumboard-tasks/issues/4250
+   */
+  it('A dependency can be injected with the Container instance and retrieve its dependencies', () => {
+    class NonInstantiatableClass {
+      constructor() {
+        throw new Error('Nope!');
+      }
+    }
+
+    class Service {
+      static inject = [Container]
+
+      public dependency;
+
+      constructor(container) {
+        this.dependency = container.get(NonInstantiatableClass);
+      }
+    }
+
+    const sut = new Container();
+    const desiredValue = { foo: 'bar' };
+    sut.registerInstance(NonInstantiatableClass, desiredValue);
+    const service = sut.get(Service);
+
+    assert.ok(service.dependency === desiredValue);
+  });
+
 });
