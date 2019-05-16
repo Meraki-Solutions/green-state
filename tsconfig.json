@@ -5,12 +5,15 @@
         "target": "es5",
         "jsx": "react",
         "moduleResolution": "node",
-        "module": "esnext",
+        "module": "commonjs",
         "noImplicitAny": false,
         "importHelpers": true,
         "lib": [
             "es6",
             "dom"
-        ]
-    }
+        ],
+    },
+    "exclude": [
+        "tests"
+    ]
 }
