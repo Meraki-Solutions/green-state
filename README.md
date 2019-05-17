@@ -282,21 +282,22 @@ const MyGroceryListWithInject = (initialValue = ['Eggs', 'Milk']) => {
 
 ### Composite State
 
-Green State encourages you to create small re-usable state classes that encapsulate a single responsibility. A side effect of this is that you often may want to subscribe to multiple states. For example, imagine a list with a field above it that allows you to add items. We have the field value as well as the list values. This is easy enough to achieve by nesting Subscribe components but it can get difficult to read the more subscribes you have. Green State provides CompositeState which allows you to subscribe to multiple states.
+Green State encourages you to create small re-usable state classes that encapsulate a single responsibility. A side effect of this is that you often may want to subscribe to multiple states. For example, imagine a list with a field above it that allows you to add items. We have the field value as well as the list values. This is easy enough to achieve by nesting Subscribe components but it can get difficult to read the more subscribes you have. Green State provides a Compose component that allows you to compose react components such as InjectString together.
+
+This works with any component that uses render props (where you pass a function as the child). So Green State's state components like InjectString can be composed with components that use render props such as formik, react power plug or react values.
 
 ```js
-import { CompositeState, StringState, ArrayState, Subscribe } from '@symbiotic/green-state';
+import { Compose, InjectString, InjectArray } from '@symbiotic/green-state';
 
 const MyGroceryList = () => {
-  <Subscribe to={() =>
-    new CompositeState(
-      new StringState(),
-      new ArrayState(),
-    )}>
-    {([
+  <Compose components={[
+    StringState,
+    <ArrayState initialValues={['Eggs']} /> {/* Create the component if you need to supply props */}
+  ]}>
+    {(
       newItem, // The first state, StringState
       groceryList // The second state, ArrayState
-    ]) => (
+    ) => (
       <>
         <form onSubmit={() => {
           groceryList.push(newItem.value);
