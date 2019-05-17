@@ -4,6 +4,7 @@
         "outDir": "./dist/",
         "target": "es5",
         "jsx": "react",
+        "declaration": true,
         "moduleResolution": "node",
         "module": "commonjs",
         "noImplicitAny": false,
