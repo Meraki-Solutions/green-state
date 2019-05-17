@@ -117,7 +117,7 @@ Some important takeaways from this example:
 
 ## Loading State Asynchronously
 
-Often state is not entire local and must be loaded asynchronously before it can be used. For this reason, the Subscribe method supports returning a promise that resolves to a state object and your render function will not be called until the state is loaded.
+Often state is not entirely local and must be loaded asynchronously before it can be used. For this reason, the Subscribe method supports returning a promise that resolves to a state object. Your render function will not be called until the state is loaded.
 
 ```js
 import { State } from '@symbiotic/green-state';
@@ -192,7 +192,7 @@ const MyToggle = (initialValue = false) => (
 
 ### InjectToggle React Helper
 
-For each of the simple states Green State provides like BooleanState, StringState we provide an Inject version that is a react component. This means you dont need to use Subscribe or the state class directly and you can pass any constructor arguments via props.
+For each of the simple states Green State provides like BooleanState and StringState, it includes an Inject version that is a react component. This means you don't need to use Subscribe or the state class directly and you can pass any constructor arguments via props.
 Comparing this to the previous example, we see that InjectToggle is just a simple adapter to make it more ergonomic to use Green State with react.
 
 ```js
