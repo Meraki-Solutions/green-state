@@ -39,7 +39,7 @@ npm install --save @symbiotic/green-state
 ## Basic Example
 
 The state of your app is stored in State objects which also provide methods for changing the state.
-A State object is any javascript object that meets simple interface, but most of the time it extends the State class provided by Green State.
+A State object is any javascript object that meets a simple interface, but most of the time it extends the State class provided by Green State.
 
 ```js
 const myState = {
