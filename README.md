@@ -44,13 +44,13 @@ A State object is any javascript object that meets simple interface, but most of
 ```js
 const myState = {
   // Merge some keys into the state, just like React's this.setState when passed an object
-  setState(objectToMergeWithExistingState) {}
+  setState(objectToMergeWithExistingState) {},
 
   // Get the current state
-  get() {}
+  get() {},
 
   // Subscribe to state changes, callback will be called every time state changes
-  subscribe(callback) {}
+  subscribe(callback) {},
 };
 ```
 
@@ -86,7 +86,7 @@ Green State provides react bindings that make it easy to subscribe to State and 
 import { Subscribe } from '@symbiotic/green-state';
 
 const Counter = ({ initialCount }) => (
-  <Subscribe to={() => new Counter(initialCount)}>
+  <Subscribe to={() => new CounterState(initialCount)}>
     {/* The state methods (increment, decrement) are automatically passed to the render function along with the state */}
     {({ count, increment, decrement }) => (
       <div>
@@ -179,15 +179,15 @@ We have found that many times we were re-writing the same state management patte
 ```js
 import { BooleanState, Subscribe } from '@symbiotic/green-state';
 
-const MyToggle = (initialValue = false) => {
+const MyToggle = (initialValue = false) => (
   <Subscribe to={() => new BooleanState(initialValue)}>
-    {({ isOn, on, off }) => {
+    {({ isOn, on, off }) => (
       <button onClick={isOn ? off : on}>
         {isOn ? 'TURN IT OFF' : 'TURN IT ON'}
       </button>
-    }}
+    )}
   </Subscribe>
-};
+);
 ```
 
 ### InjectToggle React Helper
@@ -198,11 +198,11 @@ Comparing this to the previous example, we see that InjectToggle is just a simpl
 ```js
 import { InjectToggle } from '@symbiotic/green-state';
 
-const MyToggleWithInject = (initialValue = false) => {
+const MyToggleWithInject = (initialValue = false) => (
   <InjectToggle initialValue={initialValue}>
     {/* same as above */}
-  </Subscribe>
-};
+  </InjectToggle>
+);
 ```
 
 ### InjectHover and InjectFocus
@@ -212,26 +212,26 @@ Two of the most common use-cases for toggling are handling hover and handling fo
 ```js
 import { InjectHover, InjectFocus } from '@symbiotic/green-state';
 
-const MyButton = () => {
+const MyButton = () => (
   <InjectHover>
-    {({ isHovered, onMouseOver, onMouseOut }) => {
+    {({ isHovered, onMouseOver, onMouseOut }) => (
       <button onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
         {isHovered ? 'IM HOVERED' : 'IM NOT HOVERED'}
       </button>
-    }}
+    )}
   </InjectHover>
-};
+);
 
-const MyField = () => {
-  <InjectHover>
-    {({ isFocused, onFocus, onBlur }) => {
+const MyField = () => (
+  <InjectFocus>
+    {({ isFocused, onFocus, onBlur }) => (
       <>
         <input onFocus={onFocus} onBlur={onBlur} />
         {isFocused && <span>I am focused!</span>}
       </>
-    }}
-  </InjectHover>
-};
+    )}
+  </InjectFocus>
+);
 ```
 
 ### StringState and InjectString
@@ -241,9 +241,9 @@ StringState and InjectString are used for managing the value of a single string,
 ```js
 import { StringState, Subscribe, InjectString } from '@symbiotic/green-state';
 
-const MyForm = (initialValue = 'Hello') => {
+const MyForm = ({ initialValue = 'Hello' }) => (
   <Subscribe to={() => new StringState(initialValue)}>
-    {({ value, set, clear, reset }) => {
+    {({ value, set, clear, reset }) => (
       <>
         <input
           type="text"
@@ -253,16 +253,16 @@ const MyForm = (initialValue = 'Hello') => {
         <button onClick={clear}>Clear</button> {/* Set to '' */}
         <button onClick={reset}>Reset</button> {/* Set to initialValue */}
       </>
-    }}
+    )}
   </Subscribe>
-};
+);
 
 // or use InjectString, same as above
-const MyFormWithInject = (initialValue = 'Hello') => {
+const MyFormWithInject = ({ initialValue = 'Hello' }) => (
   <InjectString initialValue={initialValue}>
     {/* same as above */}
   </InjectString>
-};
+);
 ```
 
 ### ArrayState and InjectArray
@@ -272,7 +272,7 @@ ArrayState and InjectArray are used for managing a list of values.
 ```js
 import { ArrayState, Subscribe, InjectArray } from '@symbiotic/green-state';
 
-const MyGroceryList = (initialValues = ['Eggs', 'Milk']) => {
+const MyGroceryList = ({ initialValues = ['Eggs', 'Milk'] }) => (
   <Subscribe to={() => new ArrayState(initialValues)}>
     {({ values, set, push, removeElement, clear, reset }) => (
       <>
@@ -294,14 +294,14 @@ const MyGroceryList = (initialValues = ['Eggs', 'Milk']) => {
       </>
     )}
   </Subscribe>
-};
+);
 
 // or use InjectArray, same as above
-const MyGroceryListWithInject = (initialValue = ['Eggs', 'Milk']) => {
+const MyGroceryListWithInject = ({ initialValues = ['Eggs', 'Milk'] }) => (
   <InjectArray initialValues={initialValues}>
     {/* same as above */}
   </InjectArray>
-};
+);
 ```
 
 ### Composite State
@@ -313,10 +313,10 @@ This works with any component that uses render props (where you pass a function 
 ```js
 import { Compose, InjectString, InjectArray } from '@symbiotic/green-state';
 
-const MyGroceryList = () => {
+const MyGroceryList = () => (
   <Compose components={[
-    StringState,
-    <ArrayState initialValues={['Eggs']} /> {/* Create the component if you need to supply props */}
+    InjectString,
+    <InjectArray initialValues={['Eggs']} /> /* Create the component if you need to supply props */
   ]}>
     {(
       newItem, // The first state, StringState
@@ -345,6 +345,7 @@ const MyGroceryList = () => {
       </>
     )}
   </Compose>
+);
 ```
 
 An important caveat here is that composing states/components in this way means that the entire subscription will re-render every time ANY of the states change. This can cause performance issues if one of the subscriptions changes much more frequently than others or the render is expensive. This can be solved in a variety of ways (use separate subscriptions so you only re-render the relevant part of the tree, use pure components, etc. but this is a general react issue that is not unique to Green State and is outside the scope of this documentation).
@@ -397,7 +398,7 @@ const apiClient = container.get(APIClient);
 In order to use Green State's IOC features, you need to create a top-level `<DependencyContainerContext>` and wrap it around your app. Let's imagine you want to make a User object available anywhere in your application.
 
 ```js
-import { DependencyContainerContext } from '@symbiotic/green-state';
+import { Inject, DependencyContainerContext } from '@symbiotic/green-state';
 
 class User {
   constructor({ userId, username }) {
@@ -422,7 +423,9 @@ class App extends React.Component {
   render() {
     return (
       <AppDependencyContainerContext>
-        <p>My app</p>
+        <Inject diKey={User}>
+          {user => <p>Hello {user.username}</p>}
+        </Inject>
       </AppDependencyContainerContext>
     );
   }
@@ -522,7 +525,7 @@ By putting the state into the container, it is easy to access it in any componen
 import { Inject, Subscribe, State, withDependencies } from '@symbiotic/green-state';
 
 class GlobalNotificationState extends State {
-  setMessage = (message, type = 'info') => this.setState({ message, type });
+  setMessage = ({ message, type = 'info' }) => this.setState({ message, type });
 }
 
 const AppNotificationBar = () => (
@@ -562,7 +565,7 @@ const AppNotificationBar = () => (
     {({ message, type }) => (
       <div className={`alert-${type}`}>{message}</div>
     )}
-  </Inject>
+  </InjectAndSubscribe>
 );
 ```
 
