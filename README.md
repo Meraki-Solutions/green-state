@@ -278,7 +278,7 @@ const MyGroceryList = ({ initialValues = ['Eggs', 'Milk'] }) => (
       <>
         <ul>
           {values.map((value, index) => (
-            <li key={index}>'
+            <li key={index}>
               {value}
               <button onClick={() => removeElement(value)}>X</button>
             </li>
