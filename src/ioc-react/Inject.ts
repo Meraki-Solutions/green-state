@@ -1,21 +1,21 @@
 import { ReactNode, Component } from 'react';
 import { DependencyContainerReactContext } from './DependencyContainerReactContext';
 
-interface InjectProps {
-  diKey?: any,
-  diKeys?: any[],
-  children: (...values) => ReactNode,
-  autoRegister?: boolean
+interface IInjectProps {
+  diKey?: any;
+  diKeys?: any[];
+  children: (...values) => ReactNode;
+  autoRegister?: boolean;
 }
 
-interface InjectState {
-  value?: any
+interface IInjectState {
+  value?: any;
 }
 
-export class Inject extends Component<InjectProps, InjectState> {
+export class Inject extends Component<IInjectProps, IInjectState> {
   static contextType = DependencyContainerReactContext;
 
-  state = { value: null }
+  state = { value: null };
 
   componentDidMount() {
     const { diKey, diKeys, autoRegister } = this.props;

@@ -1,25 +1,25 @@
 import { Component } from 'react';
 
-interface SubscribeProps {
-  to: () => { subscribe: (callback) => () => void, dispose: () => void },
-  children: (value) => {},
-  dispose: boolean
+interface ISubscribeProps {
+  to: () => { subscribe: (callback) => () => void, dispose: () => void };
+  children: (value) => {};
+  dispose: boolean;
 }
 
-interface SubscribeState {
-  value?: any
+interface ISubscribeState {
+  value?: any;
 }
 
-export class Subscribe extends Component<SubscribeProps, SubscribeState> {
-  state = { value: null }
+export class Subscribe extends Component<ISubscribeProps, ISubscribeState> {
+  state = { value: null };
 
   static defaultProps = {
-      dispose: false
-  }
+      dispose: false,
+  };
 
-  private subscribedTo
-  private unsubscribe
-  private unmounted = false
+  private subscribedTo;
+  private unsubscribe;
+  private unmounted = false;
 
   async componentDidMount() {
     const state = await this.props.to();

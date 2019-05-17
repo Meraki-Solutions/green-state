@@ -2,27 +2,27 @@ import * as React from 'react';
 import { DependencyContainerReactContext } from './DependencyContainerReactContext';
 import { Container } from '../ioc';
 
-interface DependencyContainerContextProps {
-  container?: Container,
-  children: React.ReactNode
+interface IProps {
+  container?: Container;
+  children: React.ReactNode;
 }
 
-interface DependencyContainerContextState {
-  doneInjecting: boolean
+interface IState {
+  doneInjecting: boolean;
 }
 
-export abstract class DependencyContainerContext extends React.Component<DependencyContainerContextProps, DependencyContainerContextState> {
+export abstract class DependencyContainerContext extends React.Component<IProps, IState> {
   static contextType = DependencyContainerReactContext;
 
   private container;
 
   state = {
-    doneInjecting: false
-  }
+    doneInjecting: false,
+  };
 
   async componentDidMount() {
-    // If you didnt provide your own container and you didnt implement containerMounted then you are just creating an empty child container
-    // Which is likely a mistake (forgetting to implement containedMounted), so throw
+    // If you didn't provide your own container and you didn't implement containerMounted
+    // then you are just creating an empty child container, which is likely a mistake
     if (!this.props.container && !this.containerMounted) {
       throw new Error((this.constructor as any).name + ' must implement containerMounted');
     }
@@ -30,15 +30,13 @@ export abstract class DependencyContainerContext extends React.Component<Depende
     // Use the provided container
     if (this.props.container) {
       this.container = this.props.container;
-    }
 
     // Otherwise create a child container
-    else if (this.context.container) {
+    } else if (this.context.container) {
       this.container = this.context.container.createChild();
-    }
 
     // Otherwise create a new top-level container
-    else {
+    } else {
       this.container = new Container();
     }
 
@@ -49,7 +47,7 @@ export abstract class DependencyContainerContext extends React.Component<Depende
     this.setState({ doneInjecting: true });
   }
 
-  abstract containerMounted(container): void
+  abstract containerMounted(container): void;
 
   render() {
     const { doneInjecting } = this.state;

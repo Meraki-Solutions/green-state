@@ -9,16 +9,16 @@ export class State {
   setState = (newState) => {
     this.state = { ...this.state, ...newState };
     this.publish();
-  };
+  }
 
   private publish = () => {
     this.subscriptions.forEach(sub => sub(this.get()));
-  };
+  }
 
   get = () => {
     const { dispose, publish, get, subscribe, subscriptions, state, setState, ...rest } = this;
     return { ...rest, ...this.state };
-  };
+  }
 
   subscribe = callback => {
     this.subscriptions.push(callback);
@@ -29,11 +29,11 @@ export class State {
     return () => {
       remove(callback, this.subscriptions);
     };
-  };
+  }
 
   dispose = () => {
     this.subscriptions = [];
-  };
+  }
 }
 
 function remove(item, array) {

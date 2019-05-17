@@ -22,6 +22,6 @@ export function withDependencies(inject) {
                     <WrappedComponent {...this.props} {...mapDependenciesToProps(this.context.container, inject)} />
                 );
             }
-        }
-    }
+        };
+    };
 }
