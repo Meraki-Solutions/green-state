@@ -18,7 +18,7 @@ const compose = (...elements) => {
       // Otherwise continue stacking arguments
       const renderFn = props =>
         isTheLast
-          ? children(propsList.concat(props))
+          ? children(...propsList.concat(props))
           : stackProps(i - 1, elements, propsList.concat(props))
 
       // Clone a element if it's passed created as <Element initial={} />
