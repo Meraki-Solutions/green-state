@@ -30,7 +30,7 @@ You can use Green State with React using the provided bindings, or you could eas
 
 ## Installation
 
-Green State is available as a package on NPM for use with a module bundler or in a Node application:
+Green State is available as a package on NPM for use with a module bundler.
 
 ```shell
 npm install --save @symbiotic/green-state
