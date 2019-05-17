@@ -1,7 +1,7 @@
 import { Component } from 'react';
 
 interface ISubscribeProps {
-  to: () => { subscribe: (callback) => () => void, dispose: () => void };
+  to: () => { subscribe: (callback) => () => void, dispose?: () => void };
   children: (value) => {};
   dispose: boolean;
 }
