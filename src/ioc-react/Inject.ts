@@ -4,7 +4,7 @@ import { DependencyContainerReactContext } from './DependencyContainerReactConte
 interface InjectProps {
   diKey?: any,
   diKeys?: any[],
-  children: (value) => ReactNode,
+  children: (...values) => ReactNode,
   autoRegister?: boolean
 }
 
@@ -19,19 +19,18 @@ export class Inject extends Component<InjectProps, InjectState> {
 
   componentDidMount() {
     const { diKey, diKeys, autoRegister } = this.props;
+    if (!diKey && !diKeys) {
+      throw new Error('You must provide either a diKey prop or a diKeys prop to Inject');
+    }
+
+    // Always use an array so that values are passed as arguments to props.children
+    const keysToInject = diKeys ? diKeys : [diKey];
 
     if (autoRegister) {
-      const keys = diKey ? [diKey] : diKeys;
-      keys.forEach(key => this.context.container.autoRegister(key));
+      keysToInject.forEach(key => this.context.container.autoRegister(key));
     }
 
-    let value;
-    if (diKey) {
-      value = this.context.container.get(diKey);
-    }
-    else if (diKeys) {
-      value = diKeys.map(key => this.context.container.get(key));
-    }
+    const value = keysToInject.map(key => this.context.container.get(key));
 
     this.setState({ value });
   }
@@ -43,6 +42,6 @@ export class Inject extends Component<InjectProps, InjectState> {
       return null;
     }
 
-    return this.props.children(value);
+    return this.props.children(...value);
   }
 }
