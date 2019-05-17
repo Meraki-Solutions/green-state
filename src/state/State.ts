@@ -2,7 +2,7 @@ export class State {
   public state: any;
   private subscriptions: Array<(state) => {}> = [];
 
-  constructor(initialState) {
+  constructor(initialState = null) {
     this.state = initialState;
   }
 
@@ -15,12 +15,10 @@ export class State {
     this.subscriptions.forEach(sub => sub(this.get()));
   };
 
-  get = () => ({
-    ...this,
-    subscribe: undefined,
-    setState: undefined,
-    ...this.state,
-  });
+  get = () => {
+    const { dispose, publish, get, subscribe, subscriptions, state, setState, ...rest } = this;
+    return { ...rest, ...this.state };
+  };
 
   subscribe = callback => {
     this.subscriptions.push(callback);
