@@ -639,14 +639,14 @@ class App extends React.Component {
 
 ## Roadmap
 
-- [ ] TOC
+- [X] TOC
 - [ ] Public website + docs
-- [ ] Don't pass setState: undefined, get: undefined to subscribers
+- [X] Don't pass setState: undefined, get: undefined to subscribers
 - [ ] Better test coverage + badge
 - [ ] Node.js support for IOC portion
 - [ ] Browser support information
 - [ ] CI build pipeline
-- [ ] TypeScript declarations
+- [X] TypeScript declarations
 - [ ] Better TypeScript DX (reduced use of any, etc.)
 - [ ] Additional bindings (angular, vue, etc.)
 - [ ] Support for using a different DI/IoC framework or container implementation (inversify)
