@@ -36,7 +36,7 @@ describe('Container', () => {
       assert.ok(instance === childServiceConfig);
     });
 
-    it('should resolve in the child container if the requested key has a dependency that is already in the child container', () => {
+    it('should resolve in the child container if it has a dependency that is already in the child container', () => {
       const parentContainer = new Container();
       const childContainer = parentContainer.createChild();
 
@@ -51,7 +51,7 @@ describe('Container', () => {
       assert.ok(instance.config === childServiceConfig);
     });
 
-    it('should resolve in the child container if there is an instance in the container even if there is also one in the parent', () => {
+    it('should resolve in the child container when it overrides an instance in the parent', () => {
       const parentContainer = new Container();
       const childContainer = parentContainer.createChild();
 
@@ -98,7 +98,7 @@ describe('Container', () => {
       }
     }
 
-    class Service {
+    class ServiceDependsOnContainer {
       static inject = [Container];
 
       public dependency;
@@ -111,7 +111,7 @@ describe('Container', () => {
     const sut = new Container();
     const desiredValue = { foo: 'bar' };
     sut.registerInstance(NonInstantiatableClass, desiredValue);
-    const service = sut.get(Service);
+    const service = sut.get(ServiceDependsOnContainer);
 
     assert.ok(service.dependency === desiredValue);
   });

@@ -54,7 +54,7 @@ describe('State', () => {
 });
 
 const listenOnce = (state, callback) => {
-  let unsub = state.subscribe(value => {
+  const unsub = state.subscribe(value => {
     if (unsub) {
       unsub();
     } else {
