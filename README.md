@@ -436,7 +436,7 @@ Now that we have provided a top-level container context, any component anywhere 
 
 ### Inject Dependencies into Components
 
-In order to get an instance from the container in a component, you can use the `<Inject>` react component. For example, lets imagine we have want to show the user profile in the header.
+In order to get an instance from the container in a component, you can use the `<Inject>` react component. For example, lets imagine we want to show the user profile in the header.
 
 ```js
 import { Inject } from '@symbiotic/green-state';
