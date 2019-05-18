@@ -372,8 +372,8 @@ class APIClient {
     this.config = config;
   }
 
-  getBlogPosts = () => {
-    const { posts } = fetch(`${this.config.baseURL}`)
+  getBlogPosts = async () => {
+    const { posts } = await fetch(`${this.config.baseURL}`)
       .then(response => response.json());
 
     return posts;
