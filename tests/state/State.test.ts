@@ -32,6 +32,25 @@ describe('State', () => {
     });
   });
 
+  context('dispose', () => {
+    it('should not be able to subscribe to a dispose state', () => {
+
+      const sut = new State();
+      sut.dispose();
+
+      let subscribeError;
+      try {
+        sut.subscribe(() => { /* This should throw an exception and never be invoked */ });
+      } catch (e) {
+        subscribeError = e;
+      }
+
+      const hasError = subscribeError && subscribeError.message === 'Cannot subscribe to a disposed State instance';
+      assert.ok(hasError, 'Expected subscribing to dispose to throw an error but it succeeded');
+    });
+
+  });
+
 });
 
 const listenOnce = (state, callback) => {

@@ -33,6 +33,9 @@ export class State {
 
   dispose = () => {
     this.subscriptions = [];
+    this.subscribe = () => {
+      throw new Error('Cannot subscribe to a disposed State instance');
+    };
   }
 }
 
