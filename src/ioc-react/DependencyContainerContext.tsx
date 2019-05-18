@@ -47,6 +47,10 @@ export abstract class DependencyContainerContext extends React.Component<IProps,
     this.setState({ doneInjecting: true });
   }
 
+  componentWillUnmount() {
+    this.container.dispose();
+  }
+
   abstract containerMounted(container): void;
 
   render() {

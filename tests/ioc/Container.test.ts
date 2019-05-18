@@ -1,10 +1,11 @@
 import { Container } from '../../src/ioc';
 import * as assert from 'assert';
 
+// tslint:disable max-classes-per-file
 class ServiceConfig {}
 
 class Service {
-  static inject = [ServiceConfig]
+  static inject = [ServiceConfig];
   constructor(public config: ServiceConfig) {}
 }
 
@@ -86,7 +87,8 @@ describe('Container', () => {
    * Note this is a regression test
    * Since our container proxied to the wrapped container
    * If it was asked for A, it would ask the wrapped container for A's dependencies
-   * If A depended on Container, it would end up with an instance of the wrapped container which would be missing the correct resolution logic
+   * If A depended on Container, it would end up with an instance of the wrapped container
+   * which would be missing the correct resolution logic
    * Fixes bugs here https://github.com/symbioticlabs/scrumboard-tasks/issues/4250
    */
   it('A dependency can be injected with the Container instance and retrieve its dependencies', () => {
@@ -97,7 +99,7 @@ describe('Container', () => {
     }
 
     class Service {
-      static inject = [Container]
+      static inject = [Container];
 
       public dependency;
 
@@ -112,6 +114,43 @@ describe('Container', () => {
     const service = sut.get(Service);
 
     assert.ok(service.dependency === desiredValue);
+  });
+
+  context('dispose', () => {
+
+    it('should call the dispose method on resolved instances in the container', () => {
+      const sut = new Container();
+
+      let wasDisposeCalled = false;
+      class ClassToDispose {
+        dispose() {
+          wasDisposeCalled = true;
+        }
+      }
+      const instance = new ClassToDispose();
+      sut.registerInstance(ClassToDispose, instance);
+
+      sut.dispose();
+
+      assert.ok(wasDisposeCalled, 'Expected dispose to have been called but it was not');
+    });
+
+    it('should NOT call the dispose method on keys that do not have an instance already in the container', () => {
+      const sut = new Container();
+
+      let wasDisposeCalled = false;
+      class ClassToDispose {
+        dispose() {
+          wasDisposeCalled = true;
+        }
+      }
+      sut.autoRegister(ClassToDispose);
+
+      sut.dispose();
+
+      assert.ok(!wasDisposeCalled, 'Expected dispose NOT to have been called but it was');
+    });
+
   });
 
 });

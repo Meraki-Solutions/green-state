@@ -75,7 +75,7 @@ export class Container {
       return keys.map(
         _key => {
           const resolvingContainer = this.getContainerWithResolver(_key);
-          const isResolvedSingleton = this.isAlreadyResolvedSingleton({ key: _key, resolvingContainer });
+          const isResolvedSingleton = this.isAlreadyResolvedSingleton({ key: _key, container: resolvingContainer });
           return {
             key: _key,
             resolvingContainer,
@@ -90,9 +90,9 @@ export class Container {
   }
 
   private AURELIA_STRATEGY_RESOLVER_INSTANCE_STRATEGY = 0;
-  private isAlreadyResolvedSingleton = ({ key, resolvingContainer }) =>
-    Boolean(resolvingContainer) &&
-    resolvingContainer.getResolver(key).strategy === this.AURELIA_STRATEGY_RESOLVER_INSTANCE_STRATEGY
+  private isAlreadyResolvedSingleton = ({ key, container }) =>
+    Boolean(container) &&
+    container.getResolver(key).strategy === this.AURELIA_STRATEGY_RESOLVER_INSTANCE_STRATEGY
 
   private autoRegisterDependencies = depGraph => {
     const recursivelyAutoRegister = (nodes) => {
@@ -183,6 +183,26 @@ export class Container {
     child.parent = this;
 
     return child;
+  }
+
+  /**
+   * For each key in the wrapped container
+   * If it is already resolved to an instance
+   * And it that instance has a dispose method, then call instance.dispose
+   * But don't call it on this Container, since that would cause an infinite loop
+   */
+  dispose = () => {
+    const container = this.wrappedContainer;
+    const { _resolvers: resolvers } = (container as any);
+    Array.from(resolvers.keys()).forEach(key => {
+      const isAlreadyResolvedSingleton = this.isAlreadyResolvedSingleton({ key, container: this.wrappedContainer });
+      if (isAlreadyResolvedSingleton) {
+        const instance = container.get(key);
+        if (instance.dispose && typeof instance.dispose === 'function' && instance !== this) {
+          instance.dispose();
+        }
+      }
+    });
   }
 
 }
