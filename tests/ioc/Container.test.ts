@@ -151,6 +151,24 @@ describe('Container', () => {
       assert.ok(!wasDisposeCalled, 'Expected dispose NOT to have been called but it was');
     });
 
+    it('should NOT call the dispose method on keys that are resolved in the parent container but not the child', () => {
+      const parentContainer = new Container();
+      const childContainer = parentContainer.createChild();
+
+      class ClassToDispose {
+        constructor(private onDispose: () => void) {}
+        dispose() {
+          this.onDispose();
+        }
+      }
+      let wasDisposeCalled = false;
+      parentContainer.registerInstance(ClassToDispose, new ClassToDispose(() => { wasDisposeCalled = true; }));
+
+      childContainer.dispose();
+
+      assert.ok(!wasDisposeCalled, 'Expected dispose NOT to have been called but it was');
+    });
+
   });
 
 });
