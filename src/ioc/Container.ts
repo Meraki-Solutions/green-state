@@ -207,7 +207,10 @@ export class Container {
 
 }
 
-// From aurelia invokers.js
+/**
+ * From aurelia invokers.js
+ * @ignore
+ */
 function getDependencies(f) {
   if (!f.hasOwnProperty('inject')) {
     return [];

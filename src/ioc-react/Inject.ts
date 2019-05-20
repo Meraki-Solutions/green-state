@@ -1,18 +1,18 @@
 import { ReactNode, Component } from 'react';
 import { DependencyContainerReactContext } from './DependencyContainerReactContext';
 
-interface IInjectProps {
+interface IProps {
   diKey?: any;
   diKeys?: any[];
   children: (...values) => ReactNode;
   autoRegister?: boolean;
 }
 
-interface IInjectState {
+interface IState {
   value?: any;
 }
 
-export class Inject extends Component<IInjectProps, IInjectState> {
+export class Inject extends Component<IProps, IState> {
   static contextType = DependencyContainerReactContext;
 
   state = { value: null };

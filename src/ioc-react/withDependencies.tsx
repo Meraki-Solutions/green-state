@@ -1,18 +1,6 @@
 import * as React from 'react';
 import { DependencyContainerReactContext } from "./DependencyContainerReactContext";
 
-function mapDependenciesToProps(container, inject) {
-    const dependencies = {};
-    Object.keys(inject).forEach(
-        propName => {
-            const dependencyKey = inject[propName];
-            dependencies[propName] = container.get(dependencyKey);
-        }
-    );
-
-    return dependencies;
-}
-
 export function withDependencies(inject) {
     return WrappedComponent => {
         return class InjectedComponent extends React.Component {
@@ -24,4 +12,19 @@ export function withDependencies(inject) {
             }
         };
     };
+}
+
+/**
+ * @ignore
+ */
+function mapDependenciesToProps(container, inject) {
+    const dependencies = {};
+    Object.keys(inject).forEach(
+        propName => {
+            const dependencyKey = inject[propName];
+            dependencies[propName] = container.get(dependencyKey);
+        }
+    );
+
+    return dependencies;
 }

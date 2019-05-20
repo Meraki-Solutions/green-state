@@ -1,16 +1,16 @@
 import { Component } from 'react';
 
-interface ISubscribeProps {
+interface IProps {
   to: () => { subscribe: (callback) => () => void, dispose?: () => void };
   children: (value) => {};
   dispose: boolean;
 }
 
-interface ISubscribeState {
+interface IState {
   value?: any;
 }
 
-export class Subscribe extends Component<ISubscribeProps, ISubscribeState> {
+export class Subscribe extends Component<IProps, IState> {
   state = { value: null };
 
   static defaultProps = {

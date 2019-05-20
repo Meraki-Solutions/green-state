@@ -39,6 +39,9 @@ export class State {
   }
 }
 
+/**
+ * @ignore
+ */
 function remove(item, array) {
   const index = array.indexOf(item);
   if (index > -1) {

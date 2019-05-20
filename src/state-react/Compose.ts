@@ -36,4 +36,7 @@ const compose = (...elements) => {
 
 export const Compose = ({ components, ...props }) => compose(...components)(props as any);
 
+/**
+ * @ignore
+ */
 const isElement = element => typeof element.type === 'function';
