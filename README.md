@@ -646,10 +646,9 @@ class App extends React.Component {
 ## Roadmap
 
 - [X] TOC
-- [ ] Public website + docs
+- [X] Public website + docs
 - [X] Don't pass setState: undefined, get: undefined to subscribers
 - [ ] Better test coverage + badge
-- [ ] Node.js support for IOC portion
 - [ ] Browser support information
 - [ ] CI build pipeline
 - [X] TypeScript declarations
@@ -660,11 +659,12 @@ class App extends React.Component {
 - [ ] Decorator for injecting dependencies as props (currently only supports HOC)
 - [ ] FAQ
 - [ ] Contributing guide
+- [ ] Node.js support for IOC portion
 - [ ] Consider splitting into separate packages (state, react-state, ioc, react-ioc)
 - [ ] Class annotations for singletons, transient, etc.
 - [ ] Class annotations for child container only (without opting in, having a State class resolve in the root container when there are child containers can be a harmful default because it can lead to unintentionally sharing generic state classes across unrelated views)
 - [ ] Document how to test state classes
-- [ ] API Reference
+- [X] API Reference
 - [ ] Troubleshooting / Gotchas
       - Accidental singletons in the root container shared across unrelated views (particularly problematic with state)
       - DI hierarchy resolution, autoRegister, our custom container resolution strategy
@@ -685,3 +685,4 @@ class App extends React.Component {
 - [ ] Motivation / 3 Principles (Composition, Encapsulation, Inversion of Control)
 - [ ] Naming conventions (Inject*, *Context)
 - [ ] Design Decisions
+- [ ] Better dispose (handle instance.dispose returning a rejected promise? Handle subsequent calls to container or state methods after dispose has been called?)
