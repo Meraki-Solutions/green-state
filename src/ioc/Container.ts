@@ -199,7 +199,12 @@ export class Container {
       if (isAlreadyResolvedSingleton) {
         const instance = container.get(key);
         if (instance.dispose && typeof instance.dispose === 'function' && instance !== this) {
-          instance.dispose();
+          try {
+            instance.dispose();
+          } catch (e) {
+            const errorMessage = 'The dispose method of an instance threw during Container.dispose, ignoring';
+            console.error(errorMessage, key, e); // tslint:disable-line no-console
+          }
         }
       }
     });

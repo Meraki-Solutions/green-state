@@ -169,6 +169,29 @@ describe('Container', () => {
       assert.ok(!wasDisposeCalled, 'Expected dispose NOT to have been called but it was');
     });
 
+    it('should NOT throw even if the dispose method on an instance throws', () => {
+      const sut = new Container();
+
+      class ClassWithDisposeThatThrows {
+        dispose() {
+          throw new Error('Dispose error!');
+        }
+      }
+
+      sut.registerInstance(ClassWithDisposeThatThrows, new ClassWithDisposeThatThrows());
+
+      const oldConsoleError = console.error; // tslint:disable-line no-console
+      let lastConsoleErrorMessage;
+      console.error = message => { lastConsoleErrorMessage = message; }; // tslint:disable-line no-console
+
+      sut.dispose();
+
+      console.error = oldConsoleError; // tslint:disable-line no-console
+
+      const disposeWasLogged = lastConsoleErrorMessage.indexOf('The dispose method of an instance threw') === 0;
+      assert.ok(disposeWasLogged, 'Expected dispose to have been called successfully');
+    });
+
   });
 
 });
