@@ -1,7 +1,27 @@
-import { State } from '../../src/state';
 import * as assert from 'assert';
+import { State } from '../../src/state';
+import { listenOnce, listenSeries } from '../support';
 
 describe('State', () => {
+
+  it('happy path', () => {
+    const sut = new State({ some: 'value' });
+
+    listenSeries(
+      sut,
+
+      // First
+      state => {
+        assert.deepEqual(state, { some: 'value' });
+        setImmediate(() => sut.setState({ some: 'otherValue' }));
+      },
+
+      // Second
+      state => {
+        assert.deepEqual(state, { some: 'otherValue' });
+      },
+    );
+  });
 
   it('should not pass subscribers unwanted properties and methods', () => {
 
@@ -32,8 +52,36 @@ describe('State', () => {
     });
   });
 
+  it('should be able to unsubscribe', () => {
+
+    const sut = new State({ not: 'relevant' });
+
+    let subscribeCallCount = 0;
+    const unsubscribe = sut.subscribe(() => {
+      subscribeCallCount++;
+    });
+
+    assert.equal(subscribeCallCount, 1);
+
+    unsubscribe();
+
+    sut.setState({ who: 'cares' });
+    assert.equal(subscribeCallCount, 1);
+  });
+
+  it('callback should not be called if no state was been set', () => {
+    const sut = new State(/* No state set */);
+
+    let subscribeCallCount = 0;
+    const unsubscribe = sut.subscribe(() => {
+      subscribeCallCount++;
+    });
+
+    assert.equal(subscribeCallCount, 0);
+  });
+
   context('dispose', () => {
-    it('should not be able to subscribe to a dispose state', () => {
+    it('should not be able to subscribe to a disposed state', () => {
 
       const sut = new State();
       sut.dispose();
@@ -52,13 +100,3 @@ describe('State', () => {
   });
 
 });
-
-const listenOnce = (state, callback) => {
-  const unsub = state.subscribe(value => {
-    if (unsub) {
-      unsub();
-    } else {
-      callback(value);
-    }
-  });
-};

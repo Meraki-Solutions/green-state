@@ -8,7 +8,7 @@ export class ArrayState extends State {
     this.initialValues = initialValues;
   }
 
-  set = values => this.setState({ values });
+  set = (values: any[]) => this.setState({ values });
   clear = () => this.setState({ values: [] });
   reset = () => this.setState({ values: this.initialValues });
 

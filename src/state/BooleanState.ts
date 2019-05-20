@@ -2,11 +2,8 @@ import { State } from './State';
 
 export class BooleanState extends State {
   constructor(initialValue = false) {
-    super({ isOn: initialValue });
-
+    super({ value: initialValue });
   }
 
-  isOn = isOn => this.setState({ isOn });
-  on = () => this.isOn(true);
-  off = () => this.isOn(false);
+  set = (value: boolean) => this.setState({ value });
 }

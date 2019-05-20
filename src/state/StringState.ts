@@ -8,7 +8,7 @@ export class StringState extends State {
     this.initialValue = initialValue;
   }
 
-  set = value => this.setState({ value });
+  set = (value: string) => this.setState({ value });
   clear = () => this.setState({ value: '' });
   reset = () => this.setState({ value: this.initialValue });
 }
