@@ -786,3 +786,4 @@ class App extends React.Component {
 - [ ] Naming conventions (Inject*, *Context)
 - [ ] Design Decisions
 - [ ] Better dispose (handle instance.dispose returning a rejected promise? Handle subsequent calls to container or state methods after dispose has been called?)
+- [ ] Consider making async example actually work with a real API
