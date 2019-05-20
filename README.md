@@ -42,10 +42,9 @@ npm install --save @symbiotic/green-state
 
 For a full reference of GreenState's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
 
-## Basic Example
+## State Objects
 
-The state of your app is stored in State objects which also provide methods for changing the state.
-A State object is any javascript object that meets a simple interface, but most of the time it extends the State class provided by GreenState.
+When you use GreenState, the state of your app is stored in State objects, which can be subscribed to and also provide methods for changing the state. The only requirement for a State object to work with GreenState is that it implements this simple interface:
 
 ```js
 const myState = {
@@ -60,8 +59,11 @@ const myState = {
 };
 ```
 
-To provide your own state class, simply sub-class the provided State class. Any methods you add will be available to subscribers.
-If you don't like classes, you can also use any object that meets the State interface of setState, get and subscribe.
+If you are comfortable using classes, you can extend the State class provided by GreenState, saving you from re-implementing the above interface every time. Any methods you add to your subclasses will be available to subscribers.
+
+## Basic Example
+
+As an illustration, here is a class that extends State to implement a simple counter with increment and decrement methods:
 
 ```js
 import { State } from '@symbiotic/green-state';
