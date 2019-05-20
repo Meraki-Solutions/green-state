@@ -64,12 +64,14 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<h1 id="green-state">Green State</h1>
-				<p>Green State is a composable state management library for Javascript Apps with first-class support for IoC. It helps you write complex applications that can evolve in a sustainable way as requirements change by encapsulating state so it is easy to reason about what parts of the system would be impacted by a given change. It also encourages composition by providing a set of small re-usable units that can be combined in a variety of different ways.</p>
-				<p>You can use Green State with React using the provided bindings, or you could easily write a few small adapters to use it with any other view library.</p>
+				<h1 id="greenstate">GreenState</h1>
+				<p>GreenState is a composable state management library for Javascript Apps with first-class support for IoC. It helps you write complex applications that can evolve in a sustainable way as requirements change by encapsulating state so it is easy to reason about what parts of the system would be impacted by a given change. It also encourages composition by providing a set of small re-usable units that can be combined in a variety of different ways.</p>
+				<p>You can use GreenState with React using the provided bindings, or you could easily write a few small adapters to use it with any other view library.</p>
+				<p>For a full reference of GreenState&#39;s API please visit <a href="https://symbioticlabs.github.io/green-state/">https://symbioticlabs.github.io/green-state/</a></p>
 				<h2 id="table-of-contents">Table of Contents</h2>
 				<ul>
 					<li><a href="#installation">Installation</a></li>
+					<li><a href="#api-reference">API Reference</a></li>
 					<li><a href="#basic-example">Basic Example</a></li>
 					<li><a href="#react-example">React Example</a></li>
 					<li><a href="#loading-state-asynchronously">Loading State Asynchronously</a></li>
@@ -95,11 +97,12 @@
 					<li><a href="#roadmap">Roadmap</a></li>
 				</ul>
 				<h2 id="installation">Installation</h2>
-				<p>Green State is available as a package on NPM for use with a module bundler.</p>
+				<p>GreenState is available as a package on NPM for use with a module bundler.</p>
 				<pre><code class="language-shell">npm install --save @symbiotic/green-state</code></pre>
-				<h2 id="basic-example">Basic Example</h2>
-				<p>The state of your app is stored in State objects which also provide methods for changing the state.
-				A State object is any javascript object that meets a simple interface, but most of the time it extends the State class provided by Green State.</p>
+				<h2 id="api-reference">API Reference</h2>
+				<p>For a full reference of GreenState&#39;s API please visit <a href="https://symbioticlabs.github.io/green-state/">https://symbioticlabs.github.io/green-state/</a></p>
+				<h2 id="state-objects">State Objects</h2>
+				<p>When you use GreenState, the state of your app is stored in State objects, which can be subscribed to and also provide methods for changing the state. The only requirement for a State object to work with GreenState is that it implements this simple interface:</p>
 				<pre><code class="language-js"><span class="hljs-keyword">const</span> myState = {
   <span class="hljs-comment">// Merge some keys into the state, just like React's this.setState when passed an object</span>
   setState(objectToMergeWithExistingState) {},
@@ -110,8 +113,9 @@
   <span class="hljs-comment">// Subscribe to state changes, callback will be called every time state changes</span>
   subscribe(callback) {},
 };</code></pre>
-				<p>To provide your own state class, simply sub-class the provided State class. Any methods you add will be available to subscribers.
-				If you don&#39;t like classes, you can also use any object that meets the State interface of setState, get and subscribe.</p>
+				<p>If you are comfortable using classes, you can extend the <code>State</code> class provided by GreenState, saving you from re-implementing the above interface every time. Any methods you add to your subclasses will be available to subscribers.</p>
+				<h2 id="basic-example">Basic Example</h2>
+				<p>As an illustration, here is a class that extends <code>State</code> to implement a simple counter with increment and decrement methods:</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { State } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CounterState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span> </span>{
@@ -131,23 +135,23 @@ counter.decrement(); <span class="hljs-comment">// Logs 11</span>
 
 unsubscribe(); <span class="hljs-comment">// Stop listening to state changes</span></code></pre>
 				<h2 id="react-example">React Example</h2>
-				<p>Green State provides react bindings that make it easy to subscribe to State and re-render your components using render props.</p>
-				<pre><code class="language-js"><span class="hljs-keyword">import</span> { Subscribe } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+				<p>GreenState provides react bindings that make it easy to subscribe to State and re-render your components using render props.</p>
+				<pre><code class="language-js">import { Subscribe } from '@symbiotic/green-state';
 
-<span class="hljs-keyword">const</span> Counter = <span class="hljs-function">(<span class="hljs-params">{ initialCount }</span>) =&gt;</span> (
-  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Subscribe</span> <span class="hljs-attr">to</span>=<span class="hljs-string">{()</span> =&gt;</span> new CounterState(initialCount)}&gt;
-    {/* The state methods (increment, decrement) are automatically passed to the render function along with the state */}
+const Counter = ({ initialCount }) =&gt; (
+  /* The state methods (increment, decrement) are automatically passed to the render function along with the state */
+  &lt;Subscribe to={() =&gt; new CounterState(initialCount)}&gt;
     {({ count, increment, decrement }) =&gt; (
-      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{increment}</span>&gt;</span>Add<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      &lt;div&gt;
+        &lt;button onClick={increment}&gt;Add&lt;/button&gt;
         Count: {count}
-        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{decrement}</span>&gt;</span>Subtract<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
-      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        &lt;button onClick={decrement}&gt;Subtract&lt;/button&gt;
+      &lt;/div&gt;
     )}
-  <span class="hljs-tag">&lt;/<span class="hljs-name">Subscribe</span>&gt;</span></span>
+  &lt;/Subscribe&gt;
 );
 
-<span class="hljs-keyword">const</span> App = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+const App = () =&gt; (
   &lt;div&gt;
     {/* 2 separate counters */}
     &lt;Counter initialCount={10} /&gt;
@@ -156,14 +160,14 @@ unsubscribe(); <span class="hljs-comment">// Stop listening to state changes</sp
 );</code></pre>
 				<p>Some important takeaways from this example:</p>
 				<ul>
-					<li>Subscribe&#39;s <code>to</code> prop takes a function that must return a state object (with subscribe and get methods).</li>
+					<li>The <code>to</code> prop of the <code>&lt;Subscribe&gt;</code> component takes a function that must return a state object (with subscribe and get methods).</li>
 					<li>Any methods of the state object are merged with the state values and passed to the render function, so adding actions to mutate state is simply a matter of adding methods to your state object.</li>
 					<li>Since the state interface is very similar to React&#39;s setState, its quite easy to start with react state and then refactor to a State class if it gets more complex.</li>
 					<li>Because our State class is separate from react, its easy to re-use it across components.</li>
-					<li>Unsubscribing to state when the component unmounts is automatically handled by the Subscribe component.</li>
+					<li>Unsubscribing to state when the component unmounts is automatically handled by the <code>&lt;Subscribe&gt;</code> component.</li>
 				</ul>
 				<h2 id="loading-state-asynchronously">Loading State Asynchronously</h2>
-				<p>Often state is not entirely local and must be loaded asynchronously before it can be used. For this reason, the Subscribe method supports returning a promise that resolves to a state object. Your render function will not be called until the state is loaded.</p>
+				<p>Often state is not entirely local and must be loaded asynchronously before it can be used. For this reason, the <code>&lt;Subscribe&gt;</code> component&#39;s <code>to</code> prop supports returning a promise that resolves to a state object. Your render function will not be called until the state is loaded.</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { State } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">BlogPostsState</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">State</span> </span>{
@@ -209,36 +213,106 @@ unsubscribe(); <span class="hljs-comment">// Stop listening to state changes</sp
 };</code></pre>
 				<p>Key points from this example</p>
 				<ul>
-					<li>Subscribe&#39;s <code>to</code> prop can be a function that returns a promise so you can handle asynchronously loading state</li>
+					<li>The <code>to</code> prop of the <code>&lt;Subscribe /&gt;</code> component can be a function that returns a promise so you can handle asynchronously loading state</li>
 					<li>Subscribe will wait to call your render function until the state class calls setState (or initializes state in the constructor)</li>
 				</ul>
 				<h2 id="state-classes-and-components">State Classes and Components</h2>
-				<p>We have found that many times we were re-writing the same state management pattern over and over. For example, toggling between 2 values (on/off, expanded/collapsed, mouseover/mouseon, etc.) or managing a string value (e.g. a form field). Green State provides a number of state classes out of the box that we think speed up development by reducing the need to rewrite the same code over and over. Green State also provides react components for each of these state classes to make it easy to use them with React.</p>
-				<h3 id="booleanstate">BooleanState</h3>
-				<pre><code class="language-js"><span class="hljs-keyword">import</span> { BooleanState, Subscribe } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+				<p>We have found that many times we were re-writing the same state management pattern over and over. For example, toggling between 2 values (on/off, expanded/collapsed, mouseover/mouseout, etc.) or managing a string value (e.g. a form field). GreenState provides a number of state classes out of the box that we think speed up development by reducing the need to rewrite the same code over and over. GreenState also provides react components for each of these state classes to make it easy to use them with React.</p>
+				<h3 id="stringstate-and-injectstring">StringState and InjectString</h3>
+				<p><code>StringState</code> and <code>&lt;InjectString&gt;</code> are used for managing the value of a single string, for example in a form field.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { StringState, Subscribe, InjectString } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+
+<span class="hljs-keyword">const</span> MyForm = <span class="hljs-function">(<span class="hljs-params">{ initialValue = <span class="hljs-string">'Hello'</span> }</span>) =&gt;</span> (
+  &lt;Subscribe to={() =&gt; new StringState(initialValue)}&gt;
+    {({ value, set, clear, reset }) =&gt; (
+      &lt;&gt;
+        &lt;input
+          type="text"
+          value={value}
+          onChange={e =&gt; set(e.target.value)}
+        /&gt;
+        &lt;button onClick={clear}&gt;Clear&lt;/button&gt; {/* Set to '' */}
+        &lt;button onClick={reset}&gt;Reset&lt;/button&gt; {/* Set to initialValue */}
+      &lt;/&gt;
+    )}
+  &lt;/Subscribe&gt;
+);
+
+// or use InjectString, same as above without needing both Subscribe and new'ing up the state class
+const MyFormWithInject = ({ initialValue = 'Hello' }) =&gt; (
+  &lt;InjectString initialValue={initialValue}&gt;
+    {({ value, set, clear, reset }) =&gt; (
+      &lt;&gt;
+        &lt;input
+          type="text"
+          value={value}
+          onChange={e =&gt; set(e.target.value)}
+        /&gt;
+        &lt;button onClick={clear}&gt;Clear&lt;/button&gt; {/* Set to '' */}
+        &lt;button onClick={reset}&gt;Reset&lt;/button&gt; {/* Set to initialValue */}
+      &lt;/&gt;
+    )}
+  &lt;/InjectString&gt;
+);</code></pre>
+				<h3 id="numberstate-and-injectnumber">NumberState and InjectNumber</h3>
+				<p><code>NumberState</code> and <code>&lt;InjectNumber&gt;</code> are used for managing the value of a single number, for example the value of a range field.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { NumberState, Subscribe, InjectNumber } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+
+<span class="hljs-keyword">const</span> MyRangeField = <span class="hljs-function">(<span class="hljs-params">{ initialValue = <span class="hljs-number">0</span> }</span>) =&gt;</span> (
+  &lt;Subscribe to={() =&gt; new NumberState(initialValue)}&gt;
+    {({ value, set }) =&gt; (
+      &lt;&gt;
+        &lt;input
+          type="range"
+          value={value}
+          onChange={e =&gt; set(Number(e.target.value))}
+        /&gt;
+      &lt;/&gt;
+    )}
+  &lt;/Subscribe&gt;
+);
+
+// or use InjectNumber, same as above without needing both Subscribe and new'ing up the state class
+const MyRangeFieldWithInject = ({ initialValue = 0 }) =&gt; (
+  &lt;InjectNumber initialValue={initialValue}&gt;
+    {({ value, set }) =&gt; (
+      &lt;&gt;
+        &lt;input
+          type="range"
+          value={value}
+          onChange={e =&gt; set(Number(e.target.value))}
+        /&gt;
+      &lt;/&gt;
+    )}
+  &lt;/InjectNumber&gt;
+);</code></pre>
+				<h3 id="booleanstate-and-injectboolean">BooleanState and InjectBoolean</h3>
+				<p>Toggling between 2 states is a common requirement, and so GreenState provides a number of utilities to make this easier. <code>BooleanState</code> can be used to manage any boolean value, but GreenState also provides a number of convenient components to make common scenarios such as managing toggles, hover or focus more ergonomic.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { BooleanState, Subscribe, InjectBoolean } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-keyword">const</span> MyToggle = <span class="hljs-function">(<span class="hljs-params">initialValue = <span class="hljs-literal">false</span></span>) =&gt;</span> (
   <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Subscribe</span> <span class="hljs-attr">to</span>=<span class="hljs-string">{()</span> =&gt;</span> new BooleanState(initialValue)}&gt;
-    {({ isOn, on, off }) =&gt; (
-      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{isOn</span> ? <span class="hljs-attr">off</span> <span class="hljs-attr">:</span> <span class="hljs-attr">on</span>}&gt;</span>
-        {isOn ? 'TURN IT OFF' : 'TURN IT ON'}
+    {({ value, set }) =&gt; (
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> set(!value)}&gt;
+        {value ? 'TURN IT OFF' : 'TURN IT ON'}
       <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
     )}
   <span class="hljs-tag">&lt;/<span class="hljs-name">Subscribe</span>&gt;</span></span>
-);</code></pre>
-				<h3 id="injecttoggle-react-helper">InjectToggle React Helper</h3>
-				<p>For each of the simple states Green State provides like BooleanState and StringState, it includes an Inject version that is a react component. This means you don&#39;t need to use Subscribe or the state class directly and you can pass any constructor arguments via props.
-				Comparing this to the previous example, we see that InjectToggle is just a simple adapter to make it more ergonomic to use Green State with react.</p>
-				<pre><code class="language-js"><span class="hljs-keyword">import</span> { InjectToggle } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+);
 
+<span class="hljs-comment">// or use InjectBoolean, same as above without needing both Subscribe and new'ing up the state class</span>
 <span class="hljs-keyword">const</span> MyToggleWithInject = <span class="hljs-function">(<span class="hljs-params">initialValue = <span class="hljs-literal">false</span></span>) =&gt;</span> (
-  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">InjectToggle</span> <span class="hljs-attr">initialValue</span>=<span class="hljs-string">{initialValue}</span>&gt;</span>
-    {/* same as above */}
-  <span class="hljs-tag">&lt;/<span class="hljs-name">InjectToggle</span>&gt;</span></span>
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">InjectBoolean</span> <span class="hljs-attr">initialValue</span>=<span class="hljs-string">{initialValue}</span>&gt;</span>
+    {({ value, set }) =&gt; (
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> set(!value)}&gt;
+        {value ? 'TURN IT OFF' : 'TURN IT ON'}
+      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    )}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">InjectBoolean</span>&gt;</span></span>
 );</code></pre>
-				<h3 id="injecthover-and-injectfocus">InjectHover and InjectFocus</h3>
-				<p>Two of the most common use-cases for toggling are handling hover and handling focus. Green State provides InjectHover and InjectFocus components that make this more ergonomic just by aliasing the isOn/on/off props.</p>
-				<pre><code class="language-js"><span class="hljs-keyword">import</span> { InjectHover, InjectFocus } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+				<h3 id="injecttoggle-injecthover-and-injectfocus-react-components">InjectToggle, InjectHover and InjectFocus React components</h3>
+				<p>The most common UI scenarios for managing a boolean value are some kind of toggle (expand/collapse), managing hover and managing focus. For this reason, GreenState provides a few additional React components based on BooleanState that provide more meaningful prop names than <code>value</code> and <code>set</code>.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { InjectHover, InjectFocus, InjectToggle } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-keyword">const</span> MyButton = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
   <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">InjectHover</span>&gt;</span>
@@ -251,43 +325,46 @@ unsubscribe(); <span class="hljs-comment">// Stop listening to state changes</sp
 );
 
 <span class="hljs-keyword">const</span> MyField = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
-  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">InjectFocus</span>&gt;</span>
+  &lt;InjectFocus&gt;
     {({ isFocused, onFocus, onBlur }) =&gt; (
-      <span class="hljs-tag">&lt;&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">onFocus</span>=<span class="hljs-string">{onFocus}</span> <span class="hljs-attr">onBlur</span>=<span class="hljs-string">{onBlur}</span> /&gt;</span>
-        {isFocused &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>I am focused!<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>}
-      <span class="hljs-tag">&lt;/&gt;</span>
+      &lt;&gt;
+        &lt;input onFocus={onFocus} onBlur={onBlur} /&gt;
+        {isFocused &amp;&amp; &lt;span&gt;I am focused!&lt;/span&gt;}
+      &lt;/&gt;
     )}
-  <span class="hljs-tag">&lt;/<span class="hljs-name">InjectFocus</span>&gt;</span>
-);</span></code></pre>
-				<h3 id="stringstate-and-injectstring">StringState and InjectString</h3>
-				<p>StringState and InjectString are used for managing the value of a single string, for example in a form field.</p>
-				<pre><code class="language-js"><span class="hljs-keyword">import</span> { StringState, Subscribe, InjectString } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
-
-<span class="hljs-keyword">const</span> MyForm = <span class="hljs-function">(<span class="hljs-params">{ initialValue = <span class="hljs-string">'Hello'</span> }</span>) =&gt;</span> (
-  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Subscribe</span> <span class="hljs-attr">to</span>=<span class="hljs-string">{()</span> =&gt;</span> new StringState(initialValue)}&gt;
-    {({ value, set, clear, reset }) =&gt; (
-      <span class="hljs-tag">&lt;&gt;</span>
-        <span class="hljs-tag">&lt;<span class="hljs-name">input</span>
-          <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span>
-          <span class="hljs-attr">value</span>=<span class="hljs-string">{value}</span>
-          <span class="hljs-attr">onChange</span>=<span class="hljs-string">{e</span> =&gt;</span> set(e.target.value)}
-        /&gt;
-        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{clear}</span>&gt;</span>Clear<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span> {/* Set to '' */}
-        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{reset}</span>&gt;</span>Reset<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span> {/* Set to initialValue */}
-      <span class="hljs-tag">&lt;/&gt;</span>
-    )}
-  <span class="hljs-tag">&lt;/<span class="hljs-name">Subscribe</span>&gt;</span>
+  &lt;/InjectFocus&gt;
 );
 
-// or use InjectString, same as above
-const MyFormWithInject = ({ initialValue = 'Hello' }) =&gt; (
-  <span class="hljs-tag">&lt;<span class="hljs-name">InjectString</span> <span class="hljs-attr">initialValue</span>=<span class="hljs-string">{initialValue}</span>&gt;</span>
-    {/* same as above */}
-  <span class="hljs-tag">&lt;/<span class="hljs-name">InjectString</span>&gt;</span>
-);</span></code></pre>
+const MySlider = () =&gt; (
+  &lt;InjectToggle&gt;
+    {({ isOn, isOff, on, off }) =&gt; (
+      &lt;div&gt;
+        &lt;label&gt;My Setting&lt;/label&gt;
+        &lt;input type="radio" value="0" checked={isOff} onChange={off} /&gt; Off
+        &lt;input type="radio" value="1" checked={isOn} onChange={on} /&gt; On
+      &lt;/div&gt;
+    )}
+  &lt;/InjectToggle&gt;
+);</code></pre>
+				<h3 id="valuestate-and-injectvalue">ValueState and InjectValue</h3>
+				<p>GreenState also provides a low level <code>ValueState</code> and <code>&lt;InjectValue</code>&gt; component which can be used to managing a single value of any type. Here is an example of managing the value of an object, but keep in mind that any type of value can be used with <code>ValueState</code>.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { ValueState, InjectValue } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+
+<span class="hljs-keyword">const</span> MyDogProfile = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Subscribe</span> <span class="hljs-attr">to</span>=<span class="hljs-string">{()</span> =&gt;</span> new ValueState({ name: 'Trevor', age: 7, eyeColor: 'blue', likes: 0 })}&gt;
+    {({ value: dog, set }) =&gt; (
+      <span class="hljs-tag">&lt;&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>{dog.name}<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Age:<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> {dog.age}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Eyes:<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> {dog.eyeColor}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Likes:<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> {dog.likes}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> set({ ...dog, likes: dog.likes + 1 })}&gt;Like this Dog<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/&gt;</span>
+    )}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">Subscribe</span>&gt;</span></span>
+);</code></pre>
 				<h3 id="arraystate-and-injectarray">ArrayState and InjectArray</h3>
-				<p>ArrayState and InjectArray are used for managing a list of values.</p>
+				<p><code>ArrayState</code> and <code>&lt;InjectArray&gt;</code> are used for managing a list of values.</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { ArrayState, Subscribe, InjectArray } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-keyword">const</span> MyGroceryList = <span class="hljs-function">(<span class="hljs-params">{ initialValues = [<span class="hljs-string">'Eggs'</span>, <span class="hljs-string">'Milk'</span>] }</span>) =&gt;</span> (
@@ -317,12 +394,30 @@ const MyFormWithInject = ({ initialValue = 'Hello' }) =&gt; (
 <span class="hljs-comment">// or use InjectArray, same as above</span>
 <span class="hljs-keyword">const</span> MyGroceryListWithInject = <span class="hljs-function">(<span class="hljs-params">{ initialValues = [<span class="hljs-string">'Eggs'</span>, <span class="hljs-string">'Milk'</span>] }</span>) =&gt;</span> (
   <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">InjectArray</span> <span class="hljs-attr">initialValues</span>=<span class="hljs-string">{initialValues}</span>&gt;</span>
-    {/* same as above */}
+    {({ values, set, push, removeElement, clear, reset }) =&gt; (
+      <span class="hljs-tag">&lt;&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+          {values.map((value, index) =&gt; (
+            <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{index}</span>&gt;</span>
+              {value}
+              <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> removeElement(value)}&gt;X<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+          ))}
+        <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> push('Toilet Paper')}&gt;Add Toilet Paper<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> push('Beer')}&gt;Add Beer<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> set(['Peanut Butter', 'Jelly'])}&gt;
+          Use Saved List 1
+        <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span> {/* Overwrite with provided value */}
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{clear}</span>&gt;</span>Clear<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span> {/* Set to [] */}
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{reset}</span>&gt;</span>Reset<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span> {/* Set to initialValues */}
+      <span class="hljs-tag">&lt;/&gt;</span>
+    )}
   <span class="hljs-tag">&lt;/<span class="hljs-name">InjectArray</span>&gt;</span></span>
 );</code></pre>
 				<h3 id="composite-state">Composite State</h3>
-				<p>Green State encourages you to create small re-usable state classes that encapsulate a single responsibility. A side effect of this is that you often may want to subscribe to multiple states. For example, imagine a list with a field above it that allows you to add items. We have the field value as well as the list values. This is easy enough to achieve by nesting Subscribe components but it can get difficult to read the more subscribes you have. Green State provides a Compose component that allows you to compose react components such as InjectString together.</p>
-				<p>This works with any component that uses render props (where you pass a function as the child). So Green State&#39;s state components like InjectString can be composed with components that use render props such as formik, react power plug or react values.</p>
+				<p>GreenState encourages you to create small re-usable state classes that encapsulate a single responsibility. A side effect of this is that you often may want to subscribe to multiple states. For example, imagine a list with a field above it that allows you to add items. We have the field value as well as the list values. This is easy enough to achieve by nesting Subscribe components but it can get difficult to read the more subscribes you have. GreenState provides a Compose component that allows you to compose react components such as InjectString together.</p>
+				<p>This works with any component that uses render props (where you pass a function as the child). So GreenState&#39;s state components like InjectString can be composed with components that use render props such as formik, react power plug or react values.</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { Compose, InjectString, InjectArray } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-keyword">const</span> MyGroceryList = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
@@ -358,9 +453,9 @@ const MyFormWithInject = ({ initialValue = 'Hello' }) =&gt; (
     )}
   &lt;/Compose&gt;
 );</code></pre>
-				<p>An important caveat here is that composing states/components in this way means that the entire subscription will re-render every time ANY of the states change. This can cause performance issues if one of the subscriptions changes much more frequently than others or the render is expensive. This can be solved in a variety of ways (use separate subscriptions so you only re-render the relevant part of the tree, use pure components, etc. but this is a general react issue that is not unique to Green State and is outside the scope of this documentation).</p>
+				<p>An important caveat here is that composing states/components in this way means that the entire subscription will re-render every time ANY of the states change. This can cause performance issues if one of the subscriptions changes much more frequently than others or the render is expensive. This can be solved in a variety of ways (use separate subscriptions so you only re-render the relevant part of the tree, use pure components, etc. but this is a general react issue that is not unique to GreenState and is outside the scope of this documentation).</p>
 				<h2 id="dependency-injection-and-inversion-of-control">Dependency Injection and Inversion of Control</h2>
-				<p>As we decompose our application into small units that have a single responsibility, we end up needing to recombine these units to build up complex functionality. This pattern is prevalent in unix (composing shell commands with pipe) and is an incredibly powerful strategy for building complex applications that are easy to reason about and support refactoring as needed (as you can swap out an implementation when new behavior is desired without having to touch a lot of code). In order to easily swap out implementations, it&#39;s important that dependencies are injected into the classes that need them so that ClassA does not need to know how to create ClassB or any of its dependencies in order to use it. A trade off is that as your application grows, so does your dependency graph, such that getting an instance of ClassA may require resolving ClassB which needs ClassC, etc, etc. Manually managing dependencies is not a sustainable approach as it requires a lot of &quot;glue code&quot; and whenever your dependency graph changes you have to manually update the glue code to use the right dependencies. This is where DI containers come in handy. All of the knowledge of how to construct classes and their dependencies is pulled up into the container. In this way, control of how to instantiate classes is &quot;inverted&quot; from the within a class constructor to the container outside of the class. This is the heart of IoC. We gain a powerful tool for controlling how our classes and their dependencies are instantiated, and we can easily change that without touching the classes themselves. Here is a simple example.</p>
+				<p>As we decompose our application into small units that have a single responsibility, we end up needing to recombine these units to build up complex functionality. This is an incredibly powerful strategy for building complex applications that are easy to reason about and support refactoring as needed (as you can swap out an implementation when new behavior is desired without having to touch a lot of code). In order to easily swap out implementations, it&#39;s important that dependencies are injected into the classes that need them so that ClassA does not need to know how to create ClassB or any of its dependencies in order to use it. A trade off is that as your application grows, so does your dependency graph, such that getting an instance of ClassA may require resolving ClassB which needs ClassC, etc, etc. Manually managing dependencies is not a sustainable approach as it requires a lot of &quot;glue code&quot; and whenever your dependency graph changes you have to manually update the glue code to use the right dependencies. This is where DI containers come in handy. All of the knowledge of how to construct classes and their dependencies is pulled up into the container. In this way, control of how to instantiate classes is &quot;inverted&quot; from the within a class constructor to the container outside of the class. This is the heart of IoC. We gain a powerful tool for controlling how our classes and their dependencies are instantiated, and we can easily change that without touching the classes themselves. Here is a simple example.</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { Container } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">APIClientConfig</span> </span>{
@@ -398,7 +493,7 @@ container.registerInstance(APIClientConfig, <span class="hljs-keyword">new</span
 <span class="hljs-comment">// You can imagine this is most useful when the line of code below is very far away from the registerInstance call above</span>
 <span class="hljs-keyword">const</span> apiClient = container.get(APIClient);</code></pre>
 				<h3 id="getting-started-with-ioc-in-react">Getting Started with IOC in React</h3>
-				<p>In order to use Green State&#39;s IOC features, you need to create a top-level <code>&lt;DependencyContainerContext&gt;</code> and wrap it around your app. Let&#39;s imagine you want to make a User object available anywhere in your application.</p>
+				<p>In order to use GreenState&#39;s IOC features, you need to create a top-level <code>&lt;DependencyContainerContext&gt;</code> and wrap it around your app. Let&#39;s imagine you want to make a User object available anywhere in your application.</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { Inject, DependencyContainerContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">User</span> </span>{
@@ -479,7 +574,7 @@ container.registerInstance(APIClientConfig, <span class="hljs-keyword">new</span
   }
 }</code></pre>
 				<h3 id="getting-dependencies-as-props">Getting Dependencies as Props</h3>
-				<p>Green State also provides a <code>withDependencies</code> Higher Order Component (HOC) which you can use to inject dependencies as props. This is especially useful if you need to use the dependencies in a class lifecycle method.</p>
+				<p>GreenState also provides a <code>withDependencies</code> Higher Order Component (HOC) which you can use to inject dependencies as props. This is especially useful if you need to use the dependencies in a class lifecycle method.</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { withDependencies } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserProfile</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
@@ -531,7 +626,7 @@ const App = () =&gt; (
       &lt;ShowMessageButton /&gt;
     &lt;/AppDependencyContainerContext&gt;
 );</code></pre>
-				<p>Note that these components are able to share state without having to know about each other. <code>AppNotificationBar</code> in the above example is a bit verbose as it needs to use <code>&lt;Inject&gt;</code> to get the state object and then <code>&lt;Subscribe&gt;</code> to subscribe to changes. Green State provides an <code>&lt;InjectAndSubscribe&gt;</code> helper that makes this common paradigm more terse.</p>
+				<p>Note that these components are able to share state without having to know about each other. <code>AppNotificationBar</code> in the above example is a bit verbose as it needs to use <code>&lt;Inject&gt;</code> to get the state object and then <code>&lt;Subscribe&gt;</code> to subscribe to changes. GreenState provides an <code>&lt;InjectAndSubscribe&gt;</code> helper that makes this common paradigm more terse.</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { InjectAndSubscribe } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-keyword">const</span> AppNotificationBar = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
@@ -542,7 +637,7 @@ const App = () =&gt; (
   <span class="hljs-tag">&lt;/<span class="hljs-name">InjectAndSubscribe</span>&gt;</span></span>
 );</code></pre>
 				<h3 id="hierarchical-ioc-with-child-containers">Hierarchical IOC with Child Containers</h3>
-				<p>So far we have looked at creating a single DI container from which we can retrieve dependencies. Green State supports creating child containers which inherit any of the dependencies from their parent container, but can also have their own services in them or override the parent services. Here is a basic example:</p>
+				<p>So far we have looked at creating a single DI container from which we can retrieve dependencies. GreenState supports creating child containers which inherit any of the dependencies from their parent container, but can also have their own services in them or override the parent services. Here is a basic example:</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { Container } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-keyword">const</span> container = <span class="hljs-keyword">new</span> Container();
@@ -564,7 +659,7 @@ childContainer.registerInstance(Theme, { <span class="hljs-attr">primaryColor</s
 				</ul>
 				<h3 id="hierarchical-ioc-in-react">Hierarchical IOC in React</h3>
 				<p>We used the <code>&lt;DependencyContainerContext&gt;</code> component earlier in order to make our user instance available to the container. You must have at least one component that extends <code>&lt;DependencyContainerContext&gt;</code>
-				at the top of your application in order to use any of Green State&#39;s ioc features such as <code>&lt;Inject&gt;</code>, <code>&lt;InjectAndSubscribe&gt;</code> and <code>withDependencies</code>. But you can also nest container contexts in your application in order to leverage Hierarchical IOC.</p>
+				at the top of your application in order to use any of GreenState&#39;s ioc features such as <code>&lt;Inject&gt;</code>, <code>&lt;InjectAndSubscribe&gt;</code> and <code>withDependencies</code>. But you can also nest container contexts in your application in order to leverage Hierarchical IOC.</p>
 				<pre><code class="language-js"><span class="hljs-keyword">import</span> { DependencyContainerContext } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppDependencyContainerContext</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">DependencyContainerContext</span> </span>{
@@ -602,10 +697,9 @@ childContainer.registerInstance(Theme, { <span class="hljs-attr">primaryColor</s
 				<h2 id="roadmap">Roadmap</h2>
 				<ul>
 					<li><input checked="" disabled="" type="checkbox"> TOC</li>
-					<li><input disabled="" type="checkbox"> Public website + docs</li>
+					<li><input checked="" disabled="" type="checkbox"> Public website + docs</li>
 					<li><input checked="" disabled="" type="checkbox"> Don&#39;t pass setState: undefined, get: undefined to subscribers</li>
 					<li><input disabled="" type="checkbox"> Better test coverage + badge</li>
-					<li><input disabled="" type="checkbox"> Node.js support for IOC portion</li>
 					<li><input disabled="" type="checkbox"> Browser support information</li>
 					<li><input disabled="" type="checkbox"> CI build pipeline</li>
 					<li><input checked="" disabled="" type="checkbox"> TypeScript declarations</li>
@@ -616,11 +710,12 @@ childContainer.registerInstance(Theme, { <span class="hljs-attr">primaryColor</s
 					<li><input disabled="" type="checkbox"> Decorator for injecting dependencies as props (currently only supports HOC)</li>
 					<li><input disabled="" type="checkbox"> FAQ</li>
 					<li><input disabled="" type="checkbox"> Contributing guide</li>
+					<li><input disabled="" type="checkbox"> Node.js support for IOC portion</li>
 					<li><input disabled="" type="checkbox"> Consider splitting into separate packages (state, react-state, ioc, react-ioc)</li>
 					<li><input disabled="" type="checkbox"> Class annotations for singletons, transient, etc.</li>
 					<li><input disabled="" type="checkbox"> Class annotations for child container only (without opting in, having a State class resolve in the root container when there are child containers can be a harmful default because it can lead to unintentionally sharing generic state classes across unrelated views)</li>
 					<li><input disabled="" type="checkbox"> Document how to test state classes</li>
-					<li><input disabled="" type="checkbox"> API Reference</li>
+					<li><input checked="" disabled="" type="checkbox"> API Reference</li>
 					<li><input disabled="" type="checkbox"> Troubleshooting / Gotchas<pre><code>- Accidental singletons in the root container shared across unrelated views (particularly problematic <span class="hljs-keyword">with</span> state)
 - DI <span class="hljs-keyword">hierarchy</span> resolution, autoRegister, our custom <span class="hljs-keyword">container</span> resolution strategy
 - <span class="hljs-keyword">Using</span> <span class="hljs-keyword">key</span> <span class="hljs-keyword">to</span> <span class="hljs-keyword">force</span> remount <span class="hljs-keyword">of</span> Subscribe <span class="hljs-keyword">or</span> prevent incorrect component re-<span class="hljs-keyword">use</span></code></pre></li>
@@ -640,6 +735,7 @@ childContainer.registerInstance(Theme, { <span class="hljs-attr">primaryColor</s
 					<li><input disabled="" type="checkbox"> Motivation / 3 Principles (Composition, Encapsulation, Inversion of Control)</li>
 					<li><input disabled="" type="checkbox"> Naming conventions (Inject*, *Context)</li>
 					<li><input disabled="" type="checkbox"> Design Decisions</li>
+					<li><input disabled="" type="checkbox"> Better dispose (handle instance.dispose returning a rejected promise? Handle subsequent calls to container or state methods after dispose has been called?)</li>
 				</ul>
 			</div>
 		</div>
@@ -674,16 +770,25 @@ childContainer.registerInstance(Theme, { <span class="hljs-attr">primaryColor</s
 						<a href="modules/_state_react_injectarray_.html">"state-<wbr>react/<wbr>Inject<wbr>Array"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_state_react_injectboolean_.html">"state-<wbr>react/<wbr>Inject<wbr>Boolean"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_state_react_injectfocus_.html">"state-<wbr>react/<wbr>Inject<wbr>Focus"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_state_react_injecthover_.html">"state-<wbr>react/<wbr>Inject<wbr>Hover"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_state_react_injectnumber_.html">"state-<wbr>react/<wbr>Inject<wbr>Number"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_state_react_injectstring_.html">"state-<wbr>react/<wbr>Inject<wbr>String"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_state_react_injecttoggle_.html">"state-<wbr>react/<wbr>Inject<wbr>Toggle"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_state_react_injectvalue_.html">"state-<wbr>react/<wbr>Inject<wbr>Value"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_state_react_subscribe_.html">"state-<wbr>react/<wbr>Subscribe"</a>
@@ -695,10 +800,16 @@ childContainer.registerInstance(Theme, { <span class="hljs-attr">primaryColor</s
 						<a href="modules/_state_booleanstate_.html">"state/<wbr>Boolean<wbr>State"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
+						<a href="modules/_state_numberstate_.html">"state/<wbr>Number<wbr>State"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
 						<a href="modules/_state_state_.html">"state/<wbr>State"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
 						<a href="modules/_state_stringstate_.html">"state/<wbr>String<wbr>State"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_state_valuestate_.html">"state/<wbr>Value<wbr>State"</a>
 					</li>
 				</ul>
 			</nav>
