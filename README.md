@@ -4,9 +4,12 @@ Green State is a composable state management library for Javascript Apps with fi
 
 You can use Green State with React using the provided bindings, or you could easily write a few small adapters to use it with any other view library.
 
+For a full reference of Green State's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
+
 ## Table of Contents
 
 * [Installation](#installation)
+* [API Reference](#api-reference)
 * [Basic Example](#basic-example)
 * [React Example](#react-example)
 * [Loading State Asynchronously](#loading-state-asynchronously)
@@ -34,6 +37,10 @@ Green State is available as a package on NPM for use with a module bundler.
 ```shell
 npm install --save @symbiotic/green-state
 ```
+
+## API Reference
+
+For a full reference of Green State's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
 
 ## Basic Example
 
