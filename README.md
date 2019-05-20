@@ -59,11 +59,11 @@ const myState = {
 };
 ```
 
-If you are comfortable using classes, you can extend the State class provided by GreenState, saving you from re-implementing the above interface every time. Any methods you add to your subclasses will be available to subscribers.
+If you are comfortable using classes, you can extend the `State` class provided by GreenState, saving you from re-implementing the above interface every time. Any methods you add to your subclasses will be available to subscribers.
 
 ## Basic Example
 
-As an illustration, here is a class that extends State to implement a simple counter with increment and decrement methods:
+As an illustration, here is a class that extends `State` to implement a simple counter with increment and decrement methods:
 
 ```js
 import { State } from '@symbiotic/green-state';
@@ -117,15 +117,15 @@ const App = () => (
 
 Some important takeaways from this example:
 
-- Subscribe's `to` prop takes a function that must return a state object (with subscribe and get methods).
+- The `to` prop of the `<Subscribe>` component takes a function that must return a state object (with subscribe and get methods).
 - Any methods of the state object are merged with the state values and passed to the render function, so adding actions to mutate state is simply a matter of adding methods to your state object.
 - Since the state interface is very similar to React's setState, its quite easy to start with react state and then refactor to a State class if it gets more complex.
 - Because our State class is separate from react, its easy to re-use it across components.
-- Unsubscribing to state when the component unmounts is automatically handled by the Subscribe component.
+- Unsubscribing to state when the component unmounts is automatically handled by the `<Subscribe>` component.
 
 ## Loading State Asynchronously
 
-Often state is not entirely local and must be loaded asynchronously before it can be used. For this reason, the Subscribe method supports returning a promise that resolves to a state object. Your render function will not be called until the state is loaded.
+Often state is not entirely local and must be loaded asynchronously before it can be used. For this reason, the `<Subscribe>` component's `to` prop supports returning a promise that resolves to a state object. Your render function will not be called until the state is loaded.
 
 ```js
 import { State } from '@symbiotic/green-state';
@@ -175,50 +175,126 @@ const App = () => {
 
 Key points from this example
 
-- Subscribe's `to` prop can be a function that returns a promise so you can handle asynchronously loading state
+- The `to` prop of the `<Subscribe />` component can be a function that returns a promise so you can handle asynchronously loading state
 - Subscribe will wait to call your render function until the state class calls setState (or initializes state in the constructor)
 
 ## State Classes and Components
 
-We have found that many times we were re-writing the same state management pattern over and over. For example, toggling between 2 values (on/off, expanded/collapsed, mouseover/mouseon, etc.) or managing a string value (e.g. a form field). GreenState provides a number of state classes out of the box that we think speed up development by reducing the need to rewrite the same code over and over. GreenState also provides react components for each of these state classes to make it easy to use them with React.
+We have found that many times we were re-writing the same state management pattern over and over. For example, toggling between 2 values (on/off, expanded/collapsed, mouseover/mouseout, etc.) or managing a string value (e.g. a form field). GreenState provides a number of state classes out of the box that we think speed up development by reducing the need to rewrite the same code over and over. GreenState also provides react components for each of these state classes to make it easy to use them with React.
 
-### BooleanState
+### StringState and InjectString
+
+`StringState` and `<InjectString>` are used for managing the value of a single string, for example in a form field.
 
 ```js
-import { BooleanState, Subscribe } from '@symbiotic/green-state';
+import { StringState, Subscribe, InjectString } from '@symbiotic/green-state';
+
+const MyForm = ({ initialValue = 'Hello' }) => (
+  <Subscribe to={() => new StringState(initialValue)}>
+    {({ value, set, clear, reset }) => (
+      <>
+        <input
+          type="text"
+          value={value}
+          onChange={e => set(e.target.value)}
+        />
+        <button onClick={clear}>Clear</button> {/* Set to '' */}
+        <button onClick={reset}>Reset</button> {/* Set to initialValue */}
+      </>
+    )}
+  </Subscribe>
+);
+
+// or use InjectString, same as above without needing both Subscribe and new'ing up the state class
+const MyFormWithInject = ({ initialValue = 'Hello' }) => (
+  <InjectString initialValue={initialValue}>
+    {({ value, set, clear, reset }) => (
+      <>
+        <input
+          type="text"
+          value={value}
+          onChange={e => set(e.target.value)}
+        />
+        <button onClick={clear}>Clear</button> {/* Set to '' */}
+        <button onClick={reset}>Reset</button> {/* Set to initialValue */}
+      </>
+    )}
+  </InjectString>
+);
+```
+
+### NumberState and InjectNumber
+
+`NumberState` and `<InjectNumber>` are used for managing the value of a single number, for example the value of a range field.
+
+```js
+import { NumberState, Subscribe, InjectNumber } from '@symbiotic/green-state';
+
+const MyRangeField = ({ initialValue = 0 }) => (
+  <Subscribe to={() => new NumberState(initialValue)}>
+    {({ value, set }) => (
+      <>
+        <input
+          type="range"
+          value={value}
+          onChange={e => set(Number(e.target.value))}
+        />
+      </>
+    )}
+  </Subscribe>
+);
+
+// or use InjectNumber, same as above without needing both Subscribe and new'ing up the state class
+const MyRangeFieldWithInject = ({ initialValue = 0 }) => (
+  <InjectNumber initialValue={initialValue}>
+    {({ value, set }) => (
+      <>
+        <input
+          type="range"
+          value={value}
+          onChange={e => set(Number(e.target.value))}
+        />
+      </>
+    )}
+  </InjectNumber>
+);
+```
+
+### BooleanState and InjectBoolean
+
+Toggling between 2 states is a common requirement, and so GreenState provides a number of utilities to make this easier. `BooleanState` can be used to manage any boolean value, but GreenState also provides a number of convenient components to make common scenarios such as managing toggles, hover or focus more ergonomic.
+
+```js
+import { BooleanState, Subscribe, InjectBoolean } from '@symbiotic/green-state';
 
 const MyToggle = (initialValue = false) => (
   <Subscribe to={() => new BooleanState(initialValue)}>
-    {({ isOn, on, off }) => (
-      <button onClick={isOn ? off : on}>
-        {isOn ? 'TURN IT OFF' : 'TURN IT ON'}
+    {({ value, set }) => (
+      <button onClick={() => set(!value)}>
+        {value ? 'TURN IT OFF' : 'TURN IT ON'}
       </button>
     )}
   </Subscribe>
 );
-```
 
-### InjectToggle React Helper
-
-For each of the simple states GreenState provides like BooleanState and StringState, it includes an Inject version that is a react component. This means you don't need to use Subscribe or the state class directly and you can pass any constructor arguments via props.
-Comparing this to the previous example, we see that InjectToggle is just a simple adapter to make it more ergonomic to use GreenState with react.
-
-```js
-import { InjectToggle } from '@symbiotic/green-state';
-
+// or use InjectBoolean, same as above without needing both Subscribe and new'ing up the state class
 const MyToggleWithInject = (initialValue = false) => (
-  <InjectToggle initialValue={initialValue}>
-    {/* same as above */}
-  </InjectToggle>
+  <InjectBoolean initialValue={initialValue}>
+    {({ value, set }) => (
+      <button onClick={() => set(!value)}>
+        {value ? 'TURN IT OFF' : 'TURN IT ON'}
+      </button>
+    )}
+  </InjectBoolean>
 );
 ```
 
-### InjectHover and InjectFocus
+### InjectToggle, InjectHover and InjectFocus React components
 
-Two of the most common use-cases for toggling are handling hover and handling focus. GreenState provides InjectHover and InjectFocus components that make this more ergonomic just by aliasing the isOn/on/off props.
+The most common UI scenarios for managing a boolean value are some kind of toggle (expand/collapse), managing hover and managing focus. For this reason, GreenState provides a few additional React components based on BooleanState that provide more meaningful prop names than `value` and `set`.
 
 ```js
-import { InjectHover, InjectFocus } from '@symbiotic/green-state';
+import { InjectHover, InjectFocus, InjectToggle } from '@symbiotic/green-state';
 
 const MyButton = () => (
   <InjectHover>
@@ -240,42 +316,45 @@ const MyField = () => (
     )}
   </InjectFocus>
 );
+
+const MySlider = () => (
+  <InjectToggle>
+    {({ isOn, isOff, on, off }) => (
+      <div>
+        <label>My Setting</label>
+        <input type="radio" value="0" checked={isOff} onChange={off} /> Off
+        <input type="radio" value="1" checked={isOn} onChange={on} /> On
+      </div>
+    )}
+  </InjectToggle>
+);
 ```
 
-### StringState and InjectString
+### ValueState and InjectValue
 
-StringState and InjectString are used for managing the value of a single string, for example in a form field.
+GreenState also provides a low level `ValueState` and `<InjectValue`> component which can be used to managing a single value of any type. Here is an example of managing the value of an object, but keep in mind that any type of value can be used with `ValueState`.
 
 ```js
-import { StringState, Subscribe, InjectString } from '@symbiotic/green-state';
+import { ValueState, InjectValue } from '@symbiotic/green-state';
 
-const MyForm = ({ initialValue = 'Hello' }) => (
-  <Subscribe to={() => new StringState(initialValue)}>
-    {({ value, set, clear, reset }) => (
+const MyDogProfile = () => (
+  <Subscribe to={() => new ValueState({ name: 'Trevor', age: 7, eyeColor: 'blue', likes: 0 })}>
+    {({ value: dog, set }) => (
       <>
-        <input
-          type="text"
-          value={value}
-          onChange={e => set(e.target.value)}
-        />
-        <button onClick={clear}>Clear</button> {/* Set to '' */}
-        <button onClick={reset}>Reset</button> {/* Set to initialValue */}
+        <h2>{dog.name}</h2>
+        <p><strong>Age:</strong> {dog.age}</p>
+        <p><strong>Eyes:</strong> {dog.eyeColor}</p>
+        <p><strong>Likes:</strong> {dog.likes}</p>
+        <button onClick={() => set({ ...dog, likes: dog.likes + 1 })}>Like this Dog</button>
       </>
     )}
   </Subscribe>
-);
-
-// or use InjectString, same as above
-const MyFormWithInject = ({ initialValue = 'Hello' }) => (
-  <InjectString initialValue={initialValue}>
-    {/* same as above */}
-  </InjectString>
 );
 ```
 
 ### ArrayState and InjectArray
 
-ArrayState and InjectArray are used for managing a list of values.
+`ArrayState` and `<InjectArray>` are used for managing a list of values.
 
 ```js
 import { ArrayState, Subscribe, InjectArray } from '@symbiotic/green-state';
@@ -307,7 +386,25 @@ const MyGroceryList = ({ initialValues = ['Eggs', 'Milk'] }) => (
 // or use InjectArray, same as above
 const MyGroceryListWithInject = ({ initialValues = ['Eggs', 'Milk'] }) => (
   <InjectArray initialValues={initialValues}>
-    {/* same as above */}
+    {({ values, set, push, removeElement, clear, reset }) => (
+      <>
+        <ul>
+          {values.map((value, index) => (
+            <li key={index}>
+              {value}
+              <button onClick={() => removeElement(value)}>X</button>
+            </li>
+          ))}
+        </ul>
+        <button onClick={() => push('Toilet Paper')}>Add Toilet Paper</button>
+        <button onClick={() => push('Beer')}>Add Beer</button>
+        <button onClick={() => set(['Peanut Butter', 'Jelly'])}>
+          Use Saved List 1
+        </button> {/* Overwrite with provided value */}
+        <button onClick={clear}>Clear</button> {/* Set to [] */}
+        <button onClick={reset}>Reset</button> {/* Set to initialValues */}
+      </>
+    )}
   </InjectArray>
 );
 ```
