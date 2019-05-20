@@ -19,6 +19,7 @@ For a full reference of GreenState's API please visit [https://symbioticlabs.git
     * [NumberState and InjectNumber](#numberstate-and-injectnumber)
     * [BooleanState and InjectBoolean](#booleanstate-and-injectboolean)
     * [InjectToggle, InjectHover and InjectFocus React components](#injecttoggle-injecthover-and-injectfocus-react-components)
+    * [ValueState and InjectValue](#valuestate-and-injectvalue)
     * [ArrayState and InjectArray](#arraystate-and-injectarray)
     * [Composite State](#composite-state)
 * [Dependency Injection and Inversion of Control](#dependency-injection-and-inversion-of-control)
