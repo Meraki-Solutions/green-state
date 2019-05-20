@@ -94,8 +94,8 @@ GreenState provides react bindings that make it easy to subscribe to State and r
 import { Subscribe } from '@symbiotic/green-state';
 
 const Counter = ({ initialCount }) => (
+  /* The state methods (increment, decrement) are automatically passed to the render function along with the state */
   <Subscribe to={() => new CounterState(initialCount)}>
-    {/* The state methods (increment, decrement) are automatically passed to the render function along with the state */}
     {({ count, increment, decrement }) => (
       <div>
         <button onClick={increment}>Add</button>
