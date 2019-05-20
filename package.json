@@ -1,6 +1,6 @@
 {
   "name": "@symbiotic/green-state",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "main": "dist/index.js",
   "scripts": {
     "test": "TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register tests/**/*.test.ts",
