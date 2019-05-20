@@ -336,7 +336,7 @@ const MySlider = () => (
 GreenState also provides a low level `ValueState` and `<InjectValue`> component which can be used to managing a single value of any type. Here is an example of managing the value of an object, but keep in mind that any type of value can be used with `ValueState`.
 
 ```js
-import { ValueState, InjectValue } from '@symbiotic/green-state';
+import { ValueState, InjectValue, Subscribe } from '@symbiotic/green-state';
 
 const MyDogProfile = () => (
   <Subscribe to={() => new ValueState({ name: 'Trevor', age: 7, eyeColor: 'blue', likes: 0 })}>
@@ -350,6 +350,21 @@ const MyDogProfile = () => (
       </>
     )}
   </Subscribe>
+);
+
+// Or use InjectValue
+const MyDogProfileWithInject = () => (
+  <InjectValue initialValue={{ name: 'Trevor', age: 7, eyeColor: 'blue', likes: 0 }}>
+    {({ value: dog, set }) => (
+      <>
+        <h2>{dog.name}</h2>
+        <p><strong>Age:</strong> {dog.age}</p>
+        <p><strong>Eyes:</strong> {dog.eyeColor}</p>
+        <p><strong>Likes:</strong> {dog.likes}</p>
+        <button onClick={() => set({ ...dog, likes: dog.likes + 1 })}>Like this Dog</button>
+      </>
+    )}
+  </InjectValue>
 );
 ```
 
@@ -429,7 +444,8 @@ const MyGroceryList = () => (
       groceryList // The second state, ArrayState
     ) => (
       <>
-        <form onSubmit={() => {
+        <form onSubmit={(e) => {
+          e.preventDefault();
           groceryList.push(newItem.value);
           newItem.clear();
         }}>
