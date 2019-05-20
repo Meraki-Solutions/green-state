@@ -1,10 +1,10 @@
-# Green State
+# GreenState
 
-Green State is a composable state management library for Javascript Apps with first-class support for IoC. It helps you write complex applications that can evolve in a sustainable way as requirements change by encapsulating state so it is easy to reason about what parts of the system would be impacted by a given change. It also encourages composition by providing a set of small re-usable units that can be combined in a variety of different ways.
+GreenState is a composable state management library for Javascript Apps with first-class support for IoC. It helps you write complex applications that can evolve in a sustainable way as requirements change by encapsulating state so it is easy to reason about what parts of the system would be impacted by a given change. It also encourages composition by providing a set of small re-usable units that can be combined in a variety of different ways.
 
-You can use Green State with React using the provided bindings, or you could easily write a few small adapters to use it with any other view library.
+You can use GreenState with React using the provided bindings, or you could easily write a few small adapters to use it with any other view library.
 
-For a full reference of Green State's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
+For a full reference of GreenState's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
 
 ## Table of Contents
 
@@ -32,7 +32,7 @@ For a full reference of Green State's API please visit [https://symbioticlabs.gi
 
 ## Installation
 
-Green State is available as a package on NPM for use with a module bundler.
+GreenState is available as a package on NPM for use with a module bundler.
 
 ```shell
 npm install --save @symbiotic/green-state
@@ -40,12 +40,12 @@ npm install --save @symbiotic/green-state
 
 ## API Reference
 
-For a full reference of Green State's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
+For a full reference of GreenState's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
 
 ## Basic Example
 
 The state of your app is stored in State objects which also provide methods for changing the state.
-A State object is any javascript object that meets a simple interface, but most of the time it extends the State class provided by Green State.
+A State object is any javascript object that meets a simple interface, but most of the time it extends the State class provided by GreenState.
 
 ```js
 const myState = {
@@ -86,7 +86,7 @@ unsubscribe(); // Stop listening to state changes
 
 ## React Example
 
-Green State provides react bindings that make it easy to subscribe to State and re-render your components using render props.
+GreenState provides react bindings that make it easy to subscribe to State and re-render your components using render props.
 
 ```js
 import { Subscribe } from '@symbiotic/green-state';
@@ -178,7 +178,7 @@ Key points from this example
 
 ## State Classes and Components
 
-We have found that many times we were re-writing the same state management pattern over and over. For example, toggling between 2 values (on/off, expanded/collapsed, mouseover/mouseon, etc.) or managing a string value (e.g. a form field). Green State provides a number of state classes out of the box that we think speed up development by reducing the need to rewrite the same code over and over. Green State also provides react components for each of these state classes to make it easy to use them with React.
+We have found that many times we were re-writing the same state management pattern over and over. For example, toggling between 2 values (on/off, expanded/collapsed, mouseover/mouseon, etc.) or managing a string value (e.g. a form field). GreenState provides a number of state classes out of the box that we think speed up development by reducing the need to rewrite the same code over and over. GreenState also provides react components for each of these state classes to make it easy to use them with React.
 
 ### BooleanState
 
@@ -198,8 +198,8 @@ const MyToggle = (initialValue = false) => (
 
 ### InjectToggle React Helper
 
-For each of the simple states Green State provides like BooleanState and StringState, it includes an Inject version that is a react component. This means you don't need to use Subscribe or the state class directly and you can pass any constructor arguments via props.
-Comparing this to the previous example, we see that InjectToggle is just a simple adapter to make it more ergonomic to use Green State with react.
+For each of the simple states GreenState provides like BooleanState and StringState, it includes an Inject version that is a react component. This means you don't need to use Subscribe or the state class directly and you can pass any constructor arguments via props.
+Comparing this to the previous example, we see that InjectToggle is just a simple adapter to make it more ergonomic to use GreenState with react.
 
 ```js
 import { InjectToggle } from '@symbiotic/green-state';
@@ -213,7 +213,7 @@ const MyToggleWithInject = (initialValue = false) => (
 
 ### InjectHover and InjectFocus
 
-Two of the most common use-cases for toggling are handling hover and handling focus. Green State provides InjectHover and InjectFocus components that make this more ergonomic just by aliasing the isOn/on/off props.
+Two of the most common use-cases for toggling are handling hover and handling focus. GreenState provides InjectHover and InjectFocus components that make this more ergonomic just by aliasing the isOn/on/off props.
 
 ```js
 import { InjectHover, InjectFocus } from '@symbiotic/green-state';
@@ -312,9 +312,9 @@ const MyGroceryListWithInject = ({ initialValues = ['Eggs', 'Milk'] }) => (
 
 ### Composite State
 
-Green State encourages you to create small re-usable state classes that encapsulate a single responsibility. A side effect of this is that you often may want to subscribe to multiple states. For example, imagine a list with a field above it that allows you to add items. We have the field value as well as the list values. This is easy enough to achieve by nesting Subscribe components but it can get difficult to read the more subscribes you have. Green State provides a Compose component that allows you to compose react components such as InjectString together.
+GreenState encourages you to create small re-usable state classes that encapsulate a single responsibility. A side effect of this is that you often may want to subscribe to multiple states. For example, imagine a list with a field above it that allows you to add items. We have the field value as well as the list values. This is easy enough to achieve by nesting Subscribe components but it can get difficult to read the more subscribes you have. GreenState provides a Compose component that allows you to compose react components such as InjectString together.
 
-This works with any component that uses render props (where you pass a function as the child). So Green State's state components like InjectString can be composed with components that use render props such as formik, react power plug or react values.
+This works with any component that uses render props (where you pass a function as the child). So GreenState's state components like InjectString can be composed with components that use render props such as formik, react power plug or react values.
 
 ```js
 import { Compose, InjectString, InjectArray } from '@symbiotic/green-state';
@@ -354,7 +354,7 @@ const MyGroceryList = () => (
 );
 ```
 
-An important caveat here is that composing states/components in this way means that the entire subscription will re-render every time ANY of the states change. This can cause performance issues if one of the subscriptions changes much more frequently than others or the render is expensive. This can be solved in a variety of ways (use separate subscriptions so you only re-render the relevant part of the tree, use pure components, etc. but this is a general react issue that is not unique to Green State and is outside the scope of this documentation).
+An important caveat here is that composing states/components in this way means that the entire subscription will re-render every time ANY of the states change. This can cause performance issues if one of the subscriptions changes much more frequently than others or the render is expensive. This can be solved in a variety of ways (use separate subscriptions so you only re-render the relevant part of the tree, use pure components, etc. but this is a general react issue that is not unique to GreenState and is outside the scope of this documentation).
 
 ## Dependency Injection and Inversion of Control
 
@@ -401,7 +401,7 @@ const apiClient = container.get(APIClient);
 
 ### Getting Started with IOC in React
 
-In order to use Green State's IOC features, you need to create a top-level `<DependencyContainerContext>` and wrap it around your app. Let's imagine you want to make a User object available anywhere in your application.
+In order to use GreenState's IOC features, you need to create a top-level `<DependencyContainerContext>` and wrap it around your app. Let's imagine you want to make a User object available anywhere in your application.
 
 ```js
 import { Inject, DependencyContainerContext } from '@symbiotic/green-state';
@@ -499,7 +499,7 @@ class UserProfile extends React.Component {
 
 ### Getting Dependencies as Props
 
-Green State also provides a `withDependencies` Higher Order Component (HOC) which you can use to inject dependencies as props. This is especially useful if you need to use the dependencies in a class lifecycle method.
+GreenState also provides a `withDependencies` Higher Order Component (HOC) which you can use to inject dependencies as props. This is especially useful if you need to use the dependencies in a class lifecycle method.
 
 ```js
 import { withDependencies } from '@symbiotic/green-state';
@@ -561,7 +561,7 @@ const App = () => (
 );
 ```
 
-Note that these components are able to share state without having to know about each other. `AppNotificationBar` in the above example is a bit verbose as it needs to use `<Inject>` to get the state object and then `<Subscribe>` to subscribe to changes. Green State provides an `<InjectAndSubscribe>` helper that makes this common paradigm more terse.
+Note that these components are able to share state without having to know about each other. `AppNotificationBar` in the above example is a bit verbose as it needs to use `<Inject>` to get the state object and then `<Subscribe>` to subscribe to changes. GreenState provides an `<InjectAndSubscribe>` helper that makes this common paradigm more terse.
 
 ```js
 import { InjectAndSubscribe } from '@symbiotic/green-state';
@@ -577,7 +577,7 @@ const AppNotificationBar = () => (
 
 ### Hierarchical IOC with Child Containers
 
-So far we have looked at creating a single DI container from which we can retrieve dependencies. Green State supports creating child containers which inherit any of the dependencies from their parent container, but can also have their own services in them or override the parent services. Here is a basic example:
+So far we have looked at creating a single DI container from which we can retrieve dependencies. GreenState supports creating child containers which inherit any of the dependencies from their parent container, but can also have their own services in them or override the parent services. Here is a basic example:
 
 ```js
 import { Container } from '@symbiotic/green-state';
@@ -604,7 +604,7 @@ console.log(theme.primaryColor); // 'green' from the child container
 ### Hierarchical IOC in React
 
 We used the `<DependencyContainerContext>` component earlier in order to make our user instance available to the container. You must have at least one component that extends `<DependencyContainerContext>`
-at the top of your application in order to use any of Green State's ioc features such as `<Inject>`, `<InjectAndSubscribe>` and `withDependencies`. But you can also nest container contexts in your application in order to leverage Hierarchical IOC.
+at the top of your application in order to use any of GreenState's ioc features such as `<Inject>`, `<InjectAndSubscribe>` and `withDependencies`. But you can also nest container contexts in your application in order to leverage Hierarchical IOC.
 
 ```js
 import { DependencyContainerContext } from '@symbiotic/green-state';
