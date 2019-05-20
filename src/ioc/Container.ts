@@ -207,6 +207,9 @@ export class Container {
           }
         }
       }
+
+      // Unregister this container with the wrapped to remove the circular dependency so they can be garbage collected
+      container.unregister(Container);
     });
   }
 
