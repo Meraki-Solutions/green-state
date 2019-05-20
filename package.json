@@ -8,7 +8,7 @@
     "build": "rm -rf dist && npm run lint && mkdir -p dist && tsc -p tsconfig.json",
     "build:watch": "mkdir -p dist && tsc -p tsconfig.json --watch",
     "docs:build": "rm -rf docs && typedoc --out docs --exclude '**/index.ts' src",
-    "docs:publish": "npm run docs:build && git checkout gh-pages && cp -R docs/* ./ && rm -rf docs && git add . && git commit -m 'Update docs' && git push origin gh-pages",
+    "docs:publish": "npm run docs:build && git checkout gh-pages && cp -R docs/* ./ && rm -rf docs && git add . && git commit -m 'Update docs' && git push origin gh-pages && git checkout master",
     "lint": "tslint -p tsconfig.json",
     "prepublishOnly": "npm run test && npm run lint && npm run build"
   },
