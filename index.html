@@ -349,7 +349,7 @@ const MySlider = () =&gt; (
 );</code></pre>
 				<h3 id="valuestate-and-injectvalue">ValueState and InjectValue</h3>
 				<p>GreenState also provides a low level <code>ValueState</code> and <code>&lt;InjectValue</code>&gt; component which can be used to managing a single value of any type. Here is an example of managing the value of an object, but keep in mind that any type of value can be used with <code>ValueState</code>.</p>
-				<pre><code class="language-js"><span class="hljs-keyword">import</span> { ValueState, InjectValue } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { ValueState, InjectValue, Subscribe } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
 
 <span class="hljs-keyword">const</span> MyDogProfile = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
   <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Subscribe</span> <span class="hljs-attr">to</span>=<span class="hljs-string">{()</span> =&gt;</span> new ValueState({ name: 'Trevor', age: 7, eyeColor: 'blue', likes: 0 })}&gt;
@@ -363,6 +363,21 @@ const MySlider = () =&gt; (
       <span class="hljs-tag">&lt;/&gt;</span>
     )}
   <span class="hljs-tag">&lt;/<span class="hljs-name">Subscribe</span>&gt;</span></span>
+);
+
+<span class="hljs-comment">// Or use InjectValue</span>
+<span class="hljs-keyword">const</span> MyDogProfileWithInject = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">InjectValue</span> <span class="hljs-attr">initialValue</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">name:</span> '<span class="hljs-attr">Trevor</span>', <span class="hljs-attr">age:</span> <span class="hljs-attr">7</span>, <span class="hljs-attr">eyeColor:</span> '<span class="hljs-attr">blue</span>', <span class="hljs-attr">likes:</span> <span class="hljs-attr">0</span> }}&gt;</span>
+    {({ value: dog, set }) =&gt; (
+      <span class="hljs-tag">&lt;&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>{dog.name}<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Age:<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> {dog.age}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Eyes:<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> {dog.eyeColor}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">strong</span>&gt;</span>Likes:<span class="hljs-tag">&lt;/<span class="hljs-name">strong</span>&gt;</span> {dog.likes}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> set({ ...dog, likes: dog.likes + 1 })}&gt;Like this Dog<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/&gt;</span>
+    )}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">InjectValue</span>&gt;</span></span>
 );</code></pre>
 				<h3 id="arraystate-and-injectarray">ArrayState and InjectArray</h3>
 				<p><code>ArrayState</code> and <code>&lt;InjectArray&gt;</code> are used for managing a list of values.</p>
@@ -431,7 +446,8 @@ const MySlider = () =&gt; (
       groceryList // The second state, ArrayState
     ) =&gt; (
       &lt;&gt;
-        &lt;form onSubmit={() =&gt; {
+        &lt;form onSubmit={(e) =&gt; {
+          e.preventDefault();
           groceryList.push(newItem.value);
           newItem.clear();
         }}&gt;
@@ -737,6 +753,7 @@ childContainer.registerInstance(Theme, { <span class="hljs-attr">primaryColor</s
 					<li><input disabled="" type="checkbox"> Naming conventions (Inject*, *Context)</li>
 					<li><input disabled="" type="checkbox"> Design Decisions</li>
 					<li><input disabled="" type="checkbox"> Better dispose (handle instance.dispose returning a rejected promise? Handle subsequent calls to container or state methods after dispose has been called?)</li>
+					<li><input disabled="" type="checkbox"> Consider making async example actually work with a real API</li>
 				</ul>
 			</div>
 		</div>
