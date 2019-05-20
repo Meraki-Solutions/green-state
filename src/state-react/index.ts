@@ -6,4 +6,5 @@ export * from './InjectHover';
 export * from './InjectNumber';
 export * from './InjectString';
 export * from './InjectToggle';
+export * from './InjectValue';
 export * from './Subscribe';
