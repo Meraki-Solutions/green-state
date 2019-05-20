@@ -24,7 +24,6 @@ You can use Green State with React using the provided bindings, or you could eas
     * [Getting Dependencies as Props](#getting-dependencies-as-props)
     * [Sharing State using IOC](#sharing-state-using-ioc)
     * [Hierarchical IOC with Child Containers](#hierarchical-ioc-with-child-containers)
-        * [Use Cases for Child Containers](#use-cases-for-child-containers)
     * [Hierarchical IOC in React](#hierarchical-ioc-in-react)
 * [Roadmap](#roadmap)
 
