@@ -459,7 +459,7 @@ const MyGroceryList = () => (
         </form>
         <ul>
           {groceryList.values.map((value, index) => (
-            <li key={index}>'
+            <li key={index}>
               {value}
               <button onClick={() => groceryList.removeElement(value)}>X</button>
             </li>
