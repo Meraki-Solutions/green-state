@@ -1,7 +1,10 @@
 {
   "name": "@symbiotic/green-state",
   "version": "0.1.0",
+  "description": "GreenState is a composable state management library for Javascript Apps with first-class support for IoC. It helps you write complex applications that can evolve in a sustainable way as requirements change by encapsulating state so it is easy to reason about what parts of the system would be impacted by a given change. It also encourages composition by providing a set of small re-usable units that can be combined in a variety of different ways.",
   "main": "dist/index.js",
+  "repository": "https://github.com/symbioticlabs/green-state",
+  "homepage": "https://symbioticlabs.github.io/green-state",
   "scripts": {
     "test": "TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register tests/**/*.test.ts",
     "test:watch": "TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register --watch --watch-extensions ts,tsx tests/**/*.test.ts",
@@ -13,8 +16,8 @@
     "prepublishOnly": "npm run test && npm run lint && npm run build"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Symbiotic Labs <team@symbioticlabs.io> (https://www.symbioticlabs.io)",
+  "license": "MIT",
   "devDependencies": {
     "@types/mocha": "^5.2.6",
     "@types/react": "^16.8.16",
