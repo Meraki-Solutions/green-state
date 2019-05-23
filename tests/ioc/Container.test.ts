@@ -81,6 +81,59 @@ describe('Container', () => {
       assert.ok(instance === config);
     });
 
+    it('Should resolve with dep from the child container but still get a dep from the root container', () => {
+
+      class RootService {}
+      class ChildService {}
+
+      class ServiceWithChildAndRootDeps {
+        static inject = [RootService, ChildService];
+
+        constructor(public rootService: RootService, public childService: ChildService) {}
+      }
+
+      const parent = new Container();
+      const child = parent.createChild();
+
+      const rootInstance = new RootService();
+      parent.registerInstance(RootService, rootInstance);
+
+      const childInstance = new ChildService();
+      child.registerInstance(ChildService, childInstance);
+
+      // child.autoRegister(ServiceWithChildAndRootDeps);
+      const service = child.get(ServiceWithChildAndRootDeps);
+
+      assert.ok(service.childService === childInstance, 'Expected childService to come from child container');
+      assert.ok(service.rootService === rootInstance, 'Expected rootService to come from root container');
+    });
+
+    it('Should resolve with dep from the parent container and a dep from the root/grandparent container', () => {
+      class GrandParentService {}
+      class ParentService {}
+
+      class ServiceWithParentAndGrandParentDeps {
+        static inject = [GrandParentService, ParentService];
+
+        constructor(public grandParentService: GrandParentService, public parentService: ParentService) {}
+      }
+
+      const grandParent = new Container();
+      const parent = grandParent.createChild();
+      const sut = parent.createChild();
+
+      const grandParentInstance = new GrandParentService();
+      grandParent.registerInstance(GrandParentService, grandParentInstance);
+
+      const parentInstance = new ParentService();
+      parent.registerInstance(ParentService, parentInstance);
+
+      const service = sut.get(ServiceWithParentAndGrandParentDeps);
+
+      assert.ok(service.parentService === parentInstance, 'Expected ParentService from parent');
+      assert.ok(service.grandParentService === grandParentInstance, 'Expected GrandParentService from grandparent');
+    });
+
   });
 
   /**

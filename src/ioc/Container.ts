@@ -59,10 +59,6 @@ export class Container {
 
     this.autoRegisterDependencies(depGraph);
 
-    if (!this.wrappedContainer.hasResolver(key) && this.parent) {
-      return this.parent.get(key);
-    }
-
     return this.wrappedContainer.get(key);
   }
 
@@ -181,6 +177,7 @@ export class Container {
   createChild = () => {
     const child = new Container(this.configuration);
     child.parent = this;
+    child.wrappedContainer.parent = this.wrappedContainer;
 
     return child;
   }
