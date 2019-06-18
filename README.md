@@ -1,5 +1,7 @@
 # GreenState
 
+Charlie says hi!
+
 GreenState is a composable state management library for Javascript Apps with first-class support for IoC. It helps you write complex applications that can evolve in a sustainable way as requirements change by encapsulating state so it is easy to reason about what parts of the system would be impacted by a given change. It also encourages composition by providing a set of small re-usable units that can be combined in a variety of different ways.
 
 You can use GreenState with React using the provided bindings, or you could easily write a few small adapters to use it with any other view library.
