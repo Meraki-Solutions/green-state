@@ -15,7 +15,14 @@
     "lint": "tslint -p tsconfig.json",
     "prepublishOnly": "npm run test && npm run lint && npm run build"
   },
-  "keywords": ["state", "react", "ioc", "inversion of control", "di", "dependency injection"],
+  "keywords": [
+    "state",
+    "react",
+    "ioc",
+    "inversion of control",
+    "di",
+    "dependency injection"
+  ],
   "author": "Symbiotic Labs <team@symbioticlabs.io> (https://www.symbioticlabs.io)",
   "license": "MIT",
   "devDependencies": {
