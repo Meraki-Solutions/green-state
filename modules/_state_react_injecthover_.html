@@ -91,80 +91,33 @@
 					<a name="injecthover" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> Inject<wbr>Hover</h3>
 					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module">
-						<li class="tsd-signature tsd-kind-icon">Inject<wbr>Hover<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Element</span></li>
+						<li class="tsd-signature tsd-kind-icon">Inject<wbr>Hover<span class="tsd-signature-symbol">(</span>props<span class="tsd-signature-symbol">: </span><a href="../interfaces/_state_react_injecthover_.iprops.html" class="tsd-signature-type">IProps</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Element</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/symbioticlabs/green-state/blob/8dae1ce/src/state-react/InjectHover.tsx#L9">state-react/InjectHover.tsx:9</a></li>
+									<li>Defined in <a href="https://github.com/symbioticlabs/green-state/blob/5ce7027/src/state-react/InjectHover.tsx#L24">state-react/InjectHover.tsx:24</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<h4 id="example">Example</h4>
+								</div>
+								<pre><code class="language-js"><span class="hljs-keyword">const</span> MyButton = <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> (
+  <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">InjectHover</span>&gt;</span>
+    {({ isHovered, onMouseOver, onMouseOut }) =&gt; (
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onMouseOver</span>=<span class="hljs-string">{onMouseOver}</span> <span class="hljs-attr">onMouseOut</span>=<span class="hljs-string">{onMouseOut}</span>&gt;</span>
+        {isHovered ? 'IM HOVERED' : 'IM NOT HOVERED'}
+      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    )}
+  <span class="hljs-tag">&lt;/<span class="hljs-name">InjectHover</span>&gt;</span></span>
+);</code></pre>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>__namedParameters: <span class="tsd-signature-type">object</span></h5>
-									<ul class="tsd-parameters">
-										<li class="tsd-parameter">
-											<h5>children<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></h5>
-											<ul class="tsd-parameters">
-												<li class="tsd-parameter-siganture">
-													<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
-														<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>state<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">React.ReactNode</span></li>
-													</ul>
-													<ul class="tsd-descriptions">
-														<li class="tsd-description">
-															<h4 class="tsd-parameters-title">Parameters</h4>
-															<ul class="tsd-parameters">
-																<li>
-																	<h5>state: <span class="tsd-signature-type">object</span></h5>
-																	<ul class="tsd-parameters">
-																		<li class="tsd-parameter">
-																			<h5>is<wbr>Hovered<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
-																		</li>
-																		<li class="tsd-parameter">
-																			<h5>on<wbr>Mouse<wbr>Out<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></h5>
-																			<ul class="tsd-parameters">
-																				<li class="tsd-parameter-siganture">
-																					<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
-																						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-																					</ul>
-																					<ul class="tsd-descriptions">
-																						<li class="tsd-description">
-																							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-																						</li>
-																					</ul>
-																				</li>
-																			</ul>
-																		</li>
-																		<li class="tsd-parameter">
-																			<h5>on<wbr>Mouse<wbr>Over<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span></h5>
-																			<ul class="tsd-parameters">
-																				<li class="tsd-parameter-siganture">
-																					<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-variable tsd-is-not-exported">
-																						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
-																					</ul>
-																					<ul class="tsd-descriptions">
-																						<li class="tsd-description">
-																							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
-																						</li>
-																					</ul>
-																				</li>
-																			</ul>
-																		</li>
-																	</ul>
-																</li>
-															</ul>
-															<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">React.ReactNode</span></h4>
-														</li>
-													</ul>
-												</li>
-											</ul>
-										</li>
-										<li class="tsd-parameter">
-											<h5>initial<wbr>Value<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
-										</li>
-									</ul>
+									<h5>props: <a href="../interfaces/_state_react_injecthover_.iprops.html" class="tsd-signature-type">IProps</a></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Element</span></h4>
