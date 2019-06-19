@@ -7,8 +7,12 @@ interface IProps {
   initialValue?: boolean;
 }
 
-export const InjectBoolean = ({ initialValue, children }: IProps) => (
-  <Subscribe to={() => new BooleanState(initialValue)}>
-    {children}
-  </Subscribe>
-);
+export const InjectBoolean = (props: IProps) => {
+  const { initialValue, children } = props;
+
+  return (
+    <Subscribe to={() => new BooleanState(initialValue)}>
+      {children}
+    </Subscribe>
+  );
+};

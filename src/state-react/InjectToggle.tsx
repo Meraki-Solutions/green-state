@@ -7,8 +7,12 @@ interface IProps {
   initialValue?: boolean;
 }
 
-export const InjectToggle = ({ initialValue, children }: IProps) => (
-  <Subscribe to={() => new BooleanState(initialValue)}>
-    {({ value: isOn, set }) => children({ isOn, isOff: !isOn, on: () => set(true), off: () => set(false) })}
-  </Subscribe>
-);
+export const InjectToggle = (props: IProps) => {
+  const { initialValue, children } = props;
+
+  return (
+    <Subscribe to={() => new BooleanState(initialValue)}>
+      {({ value: isOn, set }) => children({ isOn, isOff: !isOn, on: () => set(true), off: () => set(false) })}
+    </Subscribe>
+  );
+};

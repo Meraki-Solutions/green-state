@@ -6,14 +6,18 @@ interface IProps {
   initialValue?: boolean;
 }
 
-export const InjectFocus = ({ initialValue, children }: IProps) => (
-  <InjectToggle initialValue={initialValue}>
-    {({ isOn, on, off }) => (
-      children({
-        isFocused: isOn,
-        onFocus: on,
-        onBlur: off
-      })
-    )}
-  </InjectToggle>
-);
+export const InjectFocus = (props: IProps) => {
+  const { initialValue, children } = props;
+
+  return (
+    <InjectToggle initialValue={initialValue}>
+      {({ isOn, on, off }) => (
+        children({
+          isFocused: isOn,
+          onFocus: on,
+          onBlur: off
+        })
+      )}
+    </InjectToggle>
+  );
+};

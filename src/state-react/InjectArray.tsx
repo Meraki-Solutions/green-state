@@ -7,8 +7,12 @@ interface IProps {
   initialValues?: any[];
 }
 
-export const InjectArray = ({ initialValues, children }: IProps) => (
-  <Subscribe to={() => new ArrayState(initialValues)}>
-    {children}
-  </Subscribe>
-);
+export const InjectArray = (props: IProps) => {
+  const { initialValues, children } = props;
+
+  return (
+    <Subscribe to={() => new ArrayState(initialValues)}>
+      {children}
+    </Subscribe>
+  );
+};

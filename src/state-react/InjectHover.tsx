@@ -6,14 +6,33 @@ interface IProps {
   initialValue?: boolean;
 }
 
-export const InjectHover = ({ initialValue, children }: IProps) => (
-  <InjectToggle initialValue={initialValue}>
-    {({ isOn, on, off }) => (
-      children({
-        isHovered: isOn,
-        onMouseOver: on,
-        onMouseOut: off
-      })
-    )}
-  </InjectToggle>
-);
+/**
+ * #### Example
+ *
+ * ```js
+ * const MyButton = () => (
+ *   <InjectHover>
+ *     {({ isHovered, onMouseOver, onMouseOut }) => (
+ *       <button onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
+ *         {isHovered ? 'IM HOVERED' : 'IM NOT HOVERED'}
+ *       </button>
+ *     )}
+ *   </InjectHover>
+ * );
+ * ```
+ */
+export const InjectHover = (props: IProps) => {
+  const { initialValue, children } = props;
+
+  return (
+    <InjectToggle initialValue={initialValue}>
+      {({ isOn, on, off }) => (
+        children({
+          isHovered: isOn,
+          onMouseOver: on,
+          onMouseOut: off
+        })
+      )}
+    </InjectToggle>
+  );
+};

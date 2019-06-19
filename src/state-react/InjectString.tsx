@@ -7,8 +7,12 @@ interface IProps {
   initialValue?: string;
 }
 
-export const InjectString = ({ initialValue, children }: IProps) => (
-  <Subscribe to={() => new StringState(initialValue)}>
-    {children}
-  </Subscribe>
-);
+export const InjectString = (props: IProps) => {
+  const { initialValue, children } = props;
+
+  return (
+    <Subscribe to={() => new StringState(initialValue)}>
+      {children}
+    </Subscribe>
+  );
+};
