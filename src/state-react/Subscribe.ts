@@ -1,7 +1,12 @@
 import { Component } from 'react';
 
+interface ISubscribable {
+  subscribe: (callback) => () => void;
+  dispose?: () => void;
+}
+
 interface IProps {
-  to: () => { subscribe: (callback) => () => void, dispose?: () => void };
+  to: () => ISubscribable | Promise<ISubscribable>;
   children: (value) => {};
   dispose: boolean;
 }
