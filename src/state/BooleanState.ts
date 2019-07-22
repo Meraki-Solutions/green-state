@@ -6,4 +6,5 @@ export class BooleanState extends State {
   }
 
   set = (value: boolean) => this.setState({ value });
+  toggle = () => this.setState({ value: !this.state.value });
 }

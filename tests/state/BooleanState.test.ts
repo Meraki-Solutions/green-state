@@ -20,8 +20,15 @@ describe('BooleanState', () => {
 
       // Second
       state => {
-        const { value } = state;
+        const { value, toggle } = state;
         assert.equal(value, false);
+        setImmediate(toggle);
+      },
+
+      // Third
+      state => {
+        const { value } = state;
+        assert.equal(value, true);
       },
     );
 
