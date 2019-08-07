@@ -271,7 +271,7 @@ import { BooleanState, Subscribe, InjectBoolean } from '@symbiotic/green-state';
 
 const MyToggle = (initialValue = false) => (
   <Subscribe to={() => new BooleanState(initialValue)}>
-    {({ value, set }) => (
+    {({ value, set, toggle }) => (
       <button onClick={() => set(!value)}>
         {value ? 'TURN IT OFF' : 'TURN IT ON'}
       </button>
@@ -321,7 +321,7 @@ const MyField = () => (
 
 const MySlider = () => (
   <InjectToggle>
-    {({ isOn, isOff, on, off }) => (
+    {({ isOn, isOff, on, off, toggle }) => (
       <div>
         <label>My Setting</label>
         <input type="radio" value="0" checked={isOff} onChange={off} /> Off
