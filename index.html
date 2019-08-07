@@ -294,7 +294,7 @@ const MyRangeFieldWithInject = ({ initialValue = 0 }) =&gt; (
 
 <span class="hljs-keyword">const</span> MyToggle = <span class="hljs-function">(<span class="hljs-params">initialValue = <span class="hljs-literal">false</span></span>) =&gt;</span> (
   <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Subscribe</span> <span class="hljs-attr">to</span>=<span class="hljs-string">{()</span> =&gt;</span> new BooleanState(initialValue)}&gt;
-    {({ value, set }) =&gt; (
+    {({ value, set, toggle }) =&gt; (
       <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> set(!value)}&gt;
         {value ? 'TURN IT OFF' : 'TURN IT ON'}
       <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
@@ -339,7 +339,7 @@ const MyRangeFieldWithInject = ({ initialValue = 0 }) =&gt; (
 
 const MySlider = () =&gt; (
   &lt;InjectToggle&gt;
-    {({ isOn, isOff, on, off }) =&gt; (
+    {({ isOn, isOff, on, off, toggle }) =&gt; (
       &lt;div&gt;
         &lt;label&gt;My Setting&lt;/label&gt;
         &lt;input type="radio" value="0" checked={isOff} onChange={off} /&gt; Off
