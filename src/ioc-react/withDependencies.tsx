@@ -10,7 +10,7 @@ export function withDependencies(inject) {
                     <WrappedComponent {...this.props} {...mapDependenciesToProps(this.context.container, inject)} />
                 );
             }
-        };
+        } as any; // enables use as decorator @withDependencies in typescript
     };
 }
 
