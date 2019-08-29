@@ -3,6 +3,7 @@ import { DependencyContainerReactContext } from './DependencyContainerReactConte
 import { Container } from '../ioc';
 
 interface IProps {
+  [key: string]: any; // allow consumers to add their own props when they sub-class
   container?: Container;
   children: React.ReactNode;
 }
