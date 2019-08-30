@@ -1,6 +1,6 @@
 import { State } from './State';
 
-export class BooleanState extends State {
+export class BooleanState extends State<{value: boolean}> {
   constructor(initialValue = false) {
     super({ value: initialValue });
   }
