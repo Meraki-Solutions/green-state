@@ -54,7 +54,7 @@ describe('State', () => {
 
   it('should be able to unsubscribe', () => {
 
-    const sut = new State({ not: 'relevant' });
+    const sut = new State<any>({ not: 'relevant' });
 
     let subscribeCallCount = 0;
     const unsubscribe = sut.subscribe(() => {
