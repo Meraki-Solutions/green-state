@@ -610,6 +610,20 @@ UserProfile = withDependencies({
   theme: Theme,
   <span class="hljs-attr">user</span>: User
 })(UserProfile);</code></pre>
+				<p>If your transpiler (e.g. Babel or TypeScript) is configured to support decorators, you can use this as an
+				alternative mechanism for invoking the HOC. This is exactly equivalent to the code above:</p>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> { withDependencies } <span class="hljs-keyword">from</span> <span class="hljs-string">'@symbiotic/green-state'</span>;
+
+@withDependencies({ <span class="hljs-attr">theme</span>: Theme, <span class="hljs-attr">user</span>: User })
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserProfile</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">React</span>.<span class="hljs-title">Component</span> </span>{
+  render() {
+    <span class="hljs-keyword">const</span> { theme, user } = <span class="hljs-keyword">this</span>.props;
+
+    <span class="hljs-keyword">return</span> (
+      <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">style</span>=<span class="hljs-string">{{</span> <span class="hljs-attr">color:</span> <span class="hljs-attr">theme.primaryColor</span> }}&gt;</span>{user.username}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>
+    );
+  }
+}</code></pre>
 				<h3 id="sharing-state-using-ioc">Sharing State using IOC</h3>
 				<p>It is common you may need to share access to a piece of state across components. For example, imagine you have a toast notification in your app and you want any component to be able to able to show a message.
 				By putting the state into the container, it is easy to access it in any component with <code>&lt;Inject&gt;</code> or the <code>withDependencies</code> HOC.</p>
