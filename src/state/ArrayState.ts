@@ -1,17 +1,17 @@
 import { State } from './State';
 
-export class ArrayState extends State {
-  private initialValues: any[];
+export class ArrayState<T = any> extends State<{values: T[]}> {
+  private initialValues: T[];
 
   constructor(initialValues = []) {
     super({ values: initialValues });
     this.initialValues = initialValues;
   }
 
-  set = (values: any[]) => this.setState({ values });
+  set = (values: T[]) => this.setState({ values });
   clear = () => this.setState({ values: [] });
   reset = () => this.setState({ values: this.initialValues });
 
-  push = element => this.setState({ values: this.state.values.concat([element]) });
-  removeElement = element => this.setState({ values: this.state.values.filter(_element => _element !== element) });
+  push = (element: T) => this.setState({ values: this.state.values.concat([element]) });
+  removeElement = (element: T) => this.setState({ values: this.state.values.filter(_element => _element !== element) });
 }

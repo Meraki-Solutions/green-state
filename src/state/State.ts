@@ -1,12 +1,22 @@
-export class State {
-  public state: any;
-  private subscriptions: Array<(state) => {}> = [];
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
-  constructor(initialState = null) {
+// TODO: some day, try to get sub-class attributes explicitly included in IMergedState
+// interface IExtra<S> extends Omit<State<S>, 'dispose' | 'get' | 'subscribe' | 'state' | 'setState'> {}
+// export type IMergedState<T, S> = IExtra<S> & T;
+
+export type IMergedState<T> = T & {[key: string]: any};
+
+export type IStateCallback<T> = (state: IMergedState<T>) => void;
+
+export class State<T = any> {
+  public state: T;
+  private subscriptions: Array<IStateCallback<T>> = [];
+
+  constructor(initialState: T = null) {
     this.state = initialState;
   }
 
-  setState = (newState) => {
+  setState = (newState: Partial<T>) => {
     this.state = { ...this.state, ...newState };
     this.publish();
   }
@@ -15,12 +25,12 @@ export class State {
     this.subscriptions.forEach(sub => sub(this.get()));
   }
 
-  get = () => {
+  get = (): IMergedState<T> => {
     const { dispose, publish, get, subscribe, subscriptions, state, setState, ...rest } = this;
     return { ...rest, ...this.state };
   }
 
-  subscribe = callback => {
+  subscribe = (callback: IStateCallback<T>) => {
     this.subscriptions.push(callback);
     if (this.state) {
       callback(this.get());
@@ -42,7 +52,7 @@ export class State {
 /**
  * @ignore
  */
-function remove(item, array) {
+function remove<T>(item: T, array: T[]) {
   const index = array.indexOf(item);
   if (index > -1) {
     array.splice(index, 1);

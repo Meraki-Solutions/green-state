@@ -1,6 +1,6 @@
 import { State } from './State';
 
-export class StringState extends State {
+export class StringState extends State<{value: string}> {
   private initialValue: string;
 
   constructor(initialValue = '') {

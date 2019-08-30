@@ -638,11 +638,28 @@ UserProfile = withDependencies({
 })(UserProfile);
 ```
 
+If your transpiler (e.g. Babel or TypeScript) is configured to support decorators, you can use this as an 
+alternative mechanism for invoking the HOC. This is exactly equivalent to the code above:
+
+```js
+import { withDependencies } from '@symbiotic/green-state';
+
+@withDependencies({ theme: Theme, user: User })
+class UserProfile extends React.Component {
+  render() {
+    const { theme, user } = this.props;
+
+    return (
+      <p style={{ color: theme.primaryColor }}>{user.username}</p>
+    );
+  }
+}
+```
+
 ### Sharing State using IOC
 
 It is common you may need to share access to a piece of state across components. For example, imagine you have a toast notification in your app and you want any component to be able to able to show a message.
 By putting the state into the container, it is easy to access it in any component with `<Inject>` or the `withDependencies` HOC.
-
 
 ```js
 import { Inject, Subscribe, State, withDependencies } from '@symbiotic/green-state';

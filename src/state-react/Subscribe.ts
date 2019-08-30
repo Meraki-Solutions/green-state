@@ -1,29 +1,30 @@
 import { Component } from 'react';
+import { IStateCallback, IMergedState } from '../state';
 
-interface ISubscribable {
-  subscribe: (callback) => () => void;
+interface ISubscribable<T = any> {
+  subscribe: (callback: IStateCallback<T>) => () => void;
   dispose?: () => void;
 }
 
-interface IProps {
-  to: () => ISubscribable | Promise<ISubscribable>;
-  children: (value) => {};
+interface IProps<T> {
+  to: () => ISubscribable<T> | Promise<ISubscribable<T>>;
+  children: (value: IMergedState<T>) => {};
   dispose: boolean;
 }
 
-interface IState {
-  value?: any;
+interface IState<T> {
+  value?: IMergedState<T>;
 }
 
-export class Subscribe extends Component<IProps, IState> {
+export class Subscribe<T = any> extends Component<IProps<T>, IState<T>> {
   state = { value: null };
 
   static defaultProps = {
       dispose: false,
   };
 
-  private subscribedTo;
-  private unsubscribe;
+  private subscribedTo: ISubscribable<T>;
+  private unsubscribe: () => void;
   private unmounted = false;
 
   async componentDidMount() {
@@ -49,7 +50,7 @@ export class Subscribe extends Component<IProps, IState> {
   }
 
   render() {
-    const { value } = this.state;
+    const { value } = this.state as IState<T>;
 
     if (!value) {
       return null;
