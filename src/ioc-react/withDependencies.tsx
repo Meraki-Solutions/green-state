@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { DependencyContainerReactContext } from "./DependencyContainerReactContext";
+import { mapDependenciesToProps } from './mapDependenciesToProps';
 
-export function withDependencies(inject) {
+export function withDependencies<T>(inject: T) {
     return WrappedComponent => {
         return class InjectedComponent extends React.Component {
             static contextType = DependencyContainerReactContext;
@@ -12,19 +13,4 @@ export function withDependencies(inject) {
             }
         } as any; // enables use as decorator @withDependencies in typescript
     };
-}
-
-/**
- * @ignore
- */
-function mapDependenciesToProps(container, inject) {
-    const dependencies = {};
-    Object.keys(inject).forEach(
-        propName => {
-            const dependencyKey = inject[propName];
-            dependencies[propName] = container.get(dependencyKey);
-        }
-    );
-
-    return dependencies;
 }
