@@ -27,7 +27,6 @@ export function useSubscription<T = any>(getState: (...args) => Promise<State> |
       // We can't know what to do with an error
       // The consumer needs to be sure getState handles any errors and never rethrows
       }, (error: any) => {
-        // TODO: Better message
         // tslint:disable-next-line no-console
         console.error('The first argument to useSubscription must not throw when invoked, but it did.', error);
       });
