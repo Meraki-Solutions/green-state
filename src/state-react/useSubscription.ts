@@ -1,14 +1,6 @@
 import { useEffect, useState } from 'react';
 import { State, IMergedState } from '../state';
 
-function invokeAsPromise(delegate) {
-  try {
-    return Promise.resolve(delegate());
-  } catch (e) {
-    return Promise.reject(e);
-  }
-}
-
 // tslint:disable-next-line max-line-length
 export function useSubscription<T = any>(getState: (...args) => Promise<State> | State, useEffectInputs: any[] = []): IMergedState<T> | undefined {
   const [reactState, setReactState] = useState(undefined);
@@ -19,7 +11,7 @@ export function useSubscription<T = any>(getState: (...args) => Promise<State> |
     let unsub;
 
     // Can't use async/await b/c useEffect must return nothing or an unsub function
-    invokeAsPromise(getState)
+    return Promise.resolve().then(getState)
       .then((state: any) => {
         unsub = state.subscribe((value: any) => {
           setReactState(value);
