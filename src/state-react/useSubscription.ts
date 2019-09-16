@@ -9,24 +9,24 @@ export function useSubscription<T = any>(getState: (...args) => Promise<State> |
   useEffect(() => {
     setReactState(undefined);
 
-    let unsub;
+    let unsub: any;
 
     // Can't use async/await b/c useEffect must return nothing or an unsub function
-    return Promise.resolve().then(getState)
+    Promise.resolve().then(getState)
       .then((state: any) => {
         unsub = state.subscribe((value: any) => {
           setReactState(value);
         });
-        return () => {
-          if (unsub) {
-            unsub();
-          }
-        };
 
         // We can't know what to do with an error
         // The consumer needs to be sure getState handles any errors and never rethrows
       });
 
+    return () => {
+      if (unsub) {
+        unsub();
+      }
+    };
   }, useEffectInputs);
 
   return reactState;
