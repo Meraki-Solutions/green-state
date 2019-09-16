@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DependencyContainerReactContext } from "./DependencyContainerReactContext";
-import { mapDependenciesToProps } from './mapDependenciesToProps';
+import { Container } from '../ioc';
 
 export function withDependencies<T>(inject: T) {
     return WrappedComponent => {
@@ -13,4 +13,20 @@ export function withDependencies<T>(inject: T) {
             }
         } as any; // enables use as decorator @withDependencies in typescript
     };
+}
+
+/**
+ * @ignore
+ */
+function mapDependenciesToProps<T>(container: Container, inject: T): { [propName in keyof T]: any } {
+  const dependencies = {} as any;
+
+  Object.keys(inject).forEach(
+      propName => {
+          const dependencyKey = inject[propName];
+          dependencies[propName] = container.get(dependencyKey);
+      }
+  );
+
+  return dependencies;
 }
