@@ -215,7 +215,7 @@ const App = () => {
 Key points from this example
 
 - The `to` prop of the `<Subscribe />` component can be a function that returns a promise so you can handle asynchronously loading state
-- Subscribe will wait to call your render function until the state class calls setState (or initializes state n the constructor)
+- Subscribe will wait to call your render function until the state class calls setState (or initializes state in the constructor)
 
 ### Using a Subscription Key
 
@@ -720,7 +720,7 @@ UserProfile = withDependencies({
 })(UserProfile);
 ```
 
-If your transpiler (e.g. Babel or TypeScript) is configured to support decorators, you can use this as an 
+If your transpiler (e.g. Babel or TypeScript) is configured to support decorators, you can use this as an
 alternative mechanism for invoking the HOC. This is exactly equivalent to the code above:
 
 ```js
@@ -747,7 +747,7 @@ import { useInstance } from '@symbiotic/green-state';
 
 const UserProfile  = () => {
   const theme = useInstance(Theme);
-  const user = useInstance(User);  
+  const user = useInstance(User);
   return (
     <p style={{ color: theme.primaryColor }}>{user.username}</p>
   );
