@@ -158,9 +158,7 @@ const App = () => (
 );
 ```
 
-Important note regarding this example:
-
-- A subscription created by the `useSubscription` Hook will always emit `undefined` before the first value, hence the need to check for `!state` above.
+> **Note**: A subscription created by the `useSubscription` Hook will always emit `undefined` before the first value, hence the need to check for `!state` above.
 
 ### Loading State Asynchronously
 
@@ -219,9 +217,8 @@ Key points from this example
 
 ### Using a Subscription Key
 
-Often, a React component is dependent on external state (typically passed in as props). For example, a list of employees may be based on a "department" selector. In these cases, React requires a `key` attribute on the component, which changes whenever the external state changes, triggering the component to be remounted when it needs to present different data.
-
-Similarly, subscriptions must be provided with a key if they need to reload based on external changes. If you are using `<Subscribe>`, you simply set the `key` attribute, as with any other React component:
+Often, a React component is dependent on external state (typically passed in as props).
+For example, we may want to load a list of employees for specific department in a company (based on props.departmentId). In these cases, we can use React's key prop to ensure the component remounts whenever the departmentId prop changes, so that we load a new list of employees for the new departmentId.
 
 ```js
 const EmployeeList = ({ departmentId }) => (
@@ -239,7 +236,9 @@ const EmployeeList = ({ departmentId }) => (
 );
 ```
 
-Alternatively, you can pass the key as a second parameter to the `useSubscription` Hook as shown below. (We also need to add a check for `!state` because a Hook subscription will emit `undefined` before the first value, and whenever the key changes.)
+If you are using the useSubscription hook, then you can pass a key as a second parameter to useSubscription as shown below.
+
+> **Note**: A subscription created by the `useSubscription` Hook will always emit `undefined` before the first value, hence the need to check for `!state` above.
 
 ```js
 const EmployeeList = ({ departmentId }) => {
@@ -259,8 +258,6 @@ const EmployeeList = ({ departmentId }) => {
   );
 };
 ```
-
-In either implementation above, the `EmployeeList` will be remounted whenever the `departmentId` prop changes.
 
 ## State Classes and Components
 
@@ -757,6 +754,7 @@ const UserProfile  = () => {
 ### Sharing State using IOC
 
 It is common you may need to share access to a piece of state across components. For example, imagine you have a toast notification in your app and you want any component to be able to able to show a message.
+
 By putting the state into the container, it is easy to access it in any component. The example below illustrates using `<Inject>` and the `withDependencies` HOC (you could alternatively use the `@withDependencies` decorator, or the `useInstance` Hook):
 
 ```js
@@ -825,6 +823,44 @@ console.log(user.username); // 'trevissimo' from the parent container
 
 const theme = childContainer.get(Theme);
 console.log(theme.primaryColor); // 'green' from the child container
+```
+
+Here is the same example as above, but using the `useInstance` and `useSubscription` Hooks.
+
+```js
+import { useInstance, useSubscription, State } from '@symbiotic/green-state';
+
+class GlobalNotificationState extends State {
+  setMessage = ({ message, type = 'info' }) => this.setState({ message, type });
+}
+
+const AppNotificationBar = () => {
+  const globalNotificationsState = useInstance(GlobalNotificationState);
+  const state = useSubscription(() => globalNotificationsState);
+  if (state) {
+    return null;
+  }
+
+  return (
+    <div className={`alert-${type}`}>{message}</div>
+  );
+);
+
+let ShowMessageButton = ({ notifications }) => {
+  const notifications = useInstance(GlobalNotificationState);
+  return (
+    <button onClick={() => notifications.setMessage({ message: 'Hello!' })}>
+      Say Hello
+    </button>
+  );
+};
+
+const App = () => (
+    <AppDependencyContainerContext>
+      <AppNotificationBar />
+      <ShowMessageButton />
+    </AppDependencyContainerContext>
+);
 ```
 
 #### Use Cases for Child Containers:
