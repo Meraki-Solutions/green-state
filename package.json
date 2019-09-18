@@ -27,7 +27,8 @@
   "author": "Symbiotic Labs <team@symbioticlabs.io> (https://www.symbioticlabs.io)",
   "license": "MIT",
   "devDependencies": {
-    "@types/mocha": "^5.2.6",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.7.5",
     "@types/react": "^16.8.16",
     "assert": "^1.4.1",
     "mocha": "^6.2.0",

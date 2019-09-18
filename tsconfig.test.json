@@ -4,6 +4,10 @@
         "rootDir": ".",
         "module": "commonjs",
         "noEmit": true,
+        "types": [
+          "node",
+          "mocha"
+        ],
         "lib": [
             "es6",
             "dom"
