@@ -2,6 +2,11 @@ import * as assert from 'assert';
 import { StringState } from '../../src/state';
 import { listenSeries } from '../support';
 
+// TODO: why do I suddenly need this?
+
+// tslint:disable-next-line: ban-types
+declare const setImmediate: Function;
+
 describe('StringState', () => {
 
   it('happy path', () => {

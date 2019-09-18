@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import { ArrayState } from '../../src/state';
 import { listenSeries } from '../support';
 
+// TODO: I would like to move these tests closer to what they support
 describe('ArrayState', () => {
 
   it('happy path', () => {

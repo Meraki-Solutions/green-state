@@ -18,6 +18,7 @@ export class Inject extends Component<IProps, IState> {
   state = { value: null };
 
   componentDidMount() {
+    console.log('hello from Inject')
     const { diKey, diKeys, autoRegister } = this.props;
     if (!diKey && !diKeys) {
       throw new Error('You must provide either a diKey prop or a diKeys prop to Inject');
@@ -38,10 +39,12 @@ export class Inject extends Component<IProps, IState> {
   render() {
     const { value } = this.state;
 
+    console.log('rendering', value)
     if (!value) {
       return null;
     }
 
+    console.log('rendering children', value)
     return this.props.children(...value);
   }
 }
