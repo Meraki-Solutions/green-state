@@ -11,9 +11,11 @@ For a full reference of GreenState's API please visit [https://symbioticlabs.git
 * [Installation](#installation)
 * [API Reference](#api-reference)
 * [State Objects](#state-objects)
-* [Basic Example](#basic-example)
-* [React Example](#react-example)
-* [Loading State Asynchronously](#loading-state-asynchronously)
+    * [Basic Example](#basic-example)
+    * [React Subscription Example](#react-subscription-example)
+    * [Subscribing Using Hooks](#subscribing-using-hooks)
+    * [Loading State Asynchronously](#loading-state-asynchronously)
+    * [Using a Subscription Key](#using-a-subscription-key)
 * [State Classes and Components](#state-classes-and-components)
     * [StringState and InjectString](#stringstate-and-injectstring)
     * [NumberState and InjectNumber](#numberstate-and-injectnumber)
@@ -27,6 +29,7 @@ For a full reference of GreenState's API please visit [https://symbioticlabs.git
     * [Inject Dependencies into Components](#inject-dependencies-into-components)
     * [Getting Multiple Dependencies](#getting-multiple-dependencies)
     * [Getting Dependencies as Props](#getting-dependencies-as-props)
+    * [Getting Dependencies using Hooks](#getting-dependencies-using-hooks)
     * [Sharing State using IOC](#sharing-state-using-ioc)
     * [Hierarchical IOC with Child Containers](#hierarchical-ioc-with-child-containers)
     * [Hierarchical IOC in React](#hierarchical-ioc-in-react)
@@ -63,7 +66,7 @@ const myState = {
 
 If you are comfortable using classes, you can extend the `State` class provided by GreenState, saving you from re-implementing the above interface every time. Any methods you add to your subclasses will be available to subscribers.
 
-## Basic Example
+### Basic Example
 
 As an illustration, here is a class that extends `State` to implement a simple counter with increment and decrement methods:
 
@@ -88,7 +91,7 @@ counter.decrement(); // Logs 11
 unsubscribe(); // Stop listening to state changes
 ```
 
-## React Example
+### React Subscription Example
 
 GreenState provides react bindings that make it easy to subscribe to State and re-render your components using render props.
 
@@ -125,12 +128,44 @@ Some important takeaways from this example:
 - Because our State class is separate from react, its easy to re-use it across components.
 - Unsubscribing to state when the component unmounts is automatically handled by the `<Subscribe>` component.
 
-## Loading State Asynchronously
+### Subscribing using Hooks
+
+GreenState also provides a `useSubscription` [React Hook](https://reactjs.org/docs/hooks-intro.html) which you can use in place of `<Subscribe>` if you prefer. The code below is functionally equivalent to the example above:
+
+```js
+import { useSubscription } from '@symbiotic/green-state';
+
+const Counter = ({ initialCount }) => {
+  const state = useSubscription(() => new CounterState(initialCount));
+  if (!state) {
+    return null;
+  }
+  const { count, increment, decrement } = state;
+  return (
+    <div>
+      <button onClick={increment}>Add</button>
+      Count: {count}
+      <button onClick={decrement}>Subtract</button>
+    </div>
+  );
+};
+
+const App = () => (
+  <div>
+    <Counter initialCount={10} />
+    <Counter initialCount={20} />
+  </div>
+);
+```
+
+> **Note**: A subscription created by the `useSubscription` Hook will always emit `undefined` before the first value, hence the need to check for `!state` above.
+
+### Loading State Asynchronously
 
 Often state is not entirely local and must be loaded asynchronously before it can be used. For this reason, the `<Subscribe>` component's `to` prop supports returning a promise that resolves to a state object. Your render function will not be called until the state is loaded.
 
 ```js
-import { State } from '@symbiotic/green-state';
+import { State, Subscribe } from '@symbiotic/green-state';
 
 class BlogPostsState extends State {
   loadPosts = async () => {
@@ -179,6 +214,50 @@ Key points from this example
 
 - The `to` prop of the `<Subscribe />` component can be a function that returns a promise so you can handle asynchronously loading state
 - Subscribe will wait to call your render function until the state class calls setState (or initializes state in the constructor)
+
+### Using a Subscription Key
+
+Often, a React component is dependent on external state (typically passed in as props).
+For example, we may want to load a list of employees for specific department in a company (based on props.departmentId). In these cases, we can use React's key prop to ensure the component remounts whenever the departmentId prop changes, so that we load a new list of employees for the new departmentId.
+
+```js
+const EmployeeList = ({ departmentId }) => (
+  <Subscribe to={() => new EmployeeListState(departmentId)} key={departmentId}>
+    {({ employees }) => (
+      <div>
+        <ul>
+          {employees.map(emp => (
+            <li key={emp.empId}>{emp.name}</li>
+          ))}
+        </ul>
+      </div>
+    )}
+  </Subscribe>
+);
+```
+
+If you are using the useSubscription hook, then you can pass a key as a second parameter to useSubscription as shown below.
+
+> **Note**: A subscription created by the `useSubscription` Hook will always emit `undefined` before the first value, hence the need to check for `!state` above.
+
+```js
+const EmployeeList = ({ departmentId }) => {
+  const state = useSubscription(() => new EmployeeListState(departmentId), departmentId);
+  if (!state) {
+    return null;
+  }
+  const { employees } = state;
+  return (
+    <div>
+      <ul>
+        {employees.map(emp => (
+          <li key={emp.empId}>{emp.name}</li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+```
 
 ## State Classes and Components
 
@@ -638,7 +717,7 @@ UserProfile = withDependencies({
 })(UserProfile);
 ```
 
-If your transpiler (e.g. Babel or TypeScript) is configured to support decorators, you can use this as an 
+If your transpiler (e.g. Babel or TypeScript) is configured to support decorators, you can use this as an
 alternative mechanism for invoking the HOC. This is exactly equivalent to the code above:
 
 ```js
@@ -656,10 +735,27 @@ class UserProfile extends React.Component {
 }
 ```
 
+### Getting Dependencies using Hooks
+
+GreenState also provides a `useInstance` [React Hook](https://reactjs.org/docs/hooks-intro.html) which you can use to obtain an instance of a class from the container. If you prefer this pattern, you could re-write `UserProfile` as a functional component like this:
+
+```js
+import { useInstance } from '@symbiotic/green-state';
+
+const UserProfile  = () => {
+  const theme = useInstance(Theme);
+  const user = useInstance(User);
+  return (
+    <p style={{ color: theme.primaryColor }}>{user.username}</p>
+  );
+}
+```
+
 ### Sharing State using IOC
 
 It is common you may need to share access to a piece of state across components. For example, imagine you have a toast notification in your app and you want any component to be able to able to show a message.
-By putting the state into the container, it is easy to access it in any component with `<Inject>` or the `withDependencies` HOC.
+
+By putting the state into the container, it is easy to access it in any component. The example below illustrates using `<Inject>` and the `withDependencies` HOC (you could alternatively use the `@withDependencies` decorator, or the `useInstance` Hook):
 
 ```js
 import { Inject, Subscribe, State, withDependencies } from '@symbiotic/green-state';
@@ -680,11 +776,11 @@ const AppNotificationBar = () => (
   </Inject>
 );
 
-let ShowMessageButton = ({ notifications }) => {
+let ShowMessageButton = ({ notifications }) => (
   <button onClick={() => notifications.setMessage({ message: 'Hello!' })}>
     Say Hello
   </button>
-};
+);
 ShowMessageButton = withDependencies({ notifications: GlobalNotificationState })(ShowMessageButton);
 
 const App = () => (
@@ -727,6 +823,44 @@ console.log(user.username); // 'trevissimo' from the parent container
 
 const theme = childContainer.get(Theme);
 console.log(theme.primaryColor); // 'green' from the child container
+```
+
+Here is the same example as above, but using the `useInstance` and `useSubscription` Hooks.
+
+```js
+import { useInstance, useSubscription, State } from '@symbiotic/green-state';
+
+class GlobalNotificationState extends State {
+  setMessage = ({ message, type = 'info' }) => this.setState({ message, type });
+}
+
+const AppNotificationBar = () => {
+  const globalNotificationsState = useInstance(GlobalNotificationState);
+  const state = useSubscription(() => globalNotificationsState);
+  if (state) {
+    return null;
+  }
+
+  return (
+    <div className={`alert-${type}`}>{message}</div>
+  );
+);
+
+let ShowMessageButton = ({ notifications }) => {
+  const notifications = useInstance(GlobalNotificationState);
+  return (
+    <button onClick={() => notifications.setMessage({ message: 'Hello!' })}>
+      Say Hello
+    </button>
+  );
+};
+
+const App = () => (
+    <AppDependencyContainerContext>
+      <AppNotificationBar />
+      <ShowMessageButton />
+    </AppDependencyContainerContext>
+);
 ```
 
 #### Use Cases for Child Containers:

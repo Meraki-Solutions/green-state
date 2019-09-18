@@ -8,3 +8,4 @@ export * from './InjectString';
 export * from './InjectToggle';
 export * from './InjectValue';
 export * from './Subscribe';
+export * from './useSubscription';

@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { DependencyContainerReactContext } from "./DependencyContainerReactContext";
+import { Container } from '../ioc';
 
-export function withDependencies(inject) {
+export function withDependencies<T>(inject: T) {
     return WrappedComponent => {
         return class InjectedComponent extends React.Component {
             static contextType = DependencyContainerReactContext;
@@ -17,14 +18,15 @@ export function withDependencies(inject) {
 /**
  * @ignore
  */
-function mapDependenciesToProps(container, inject) {
-    const dependencies = {};
-    Object.keys(inject).forEach(
-        propName => {
-            const dependencyKey = inject[propName];
-            dependencies[propName] = container.get(dependencyKey);
-        }
-    );
+function mapDependenciesToProps<T>(container: Container, inject: T): { [propName in keyof T]: any } {
+  const dependencies = {} as any;
 
-    return dependencies;
+  Object.keys(inject).forEach(
+      propName => {
+          const dependencyKey = inject[propName];
+          dependencies[propName] = container.get(dependencyKey);
+      }
+  );
+
+  return dependencies;
 }
