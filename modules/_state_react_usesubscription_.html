@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IState | @symbiotic/green-state</title>
+	<title>&quot;state-react/useSubscription&quot; | @symbiotic/green-state</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,59 +56,86 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="../modules/_state_react_subscribe_.html">&quot;state-react/Subscribe&quot;</a>
-				</li>
-				<li>
-					<a href="_state_react_subscribe_.istate.html">IState</a>
+					<a href="_state_react_usesubscription_.html">&quot;state-react/useSubscription&quot;</a>
 				</li>
 			</ul>
-			<h1>Interface IState&lt;T&gt;</h1>
+			<h1>External module &quot;state-react/useSubscription&quot;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-type-parameters">
-				<h3>Type parameters</h3>
-				<ul class="tsd-type-parameters">
-					<li>
-						<h4>T</h4>
-					</li>
-				</ul>
-			</section>
-			<section class="tsd-panel tsd-hierarchy">
-				<h3>Hierarchy</h3>
-				<ul class="tsd-hierarchy">
-					<li>
-						<span class="target">IState</span>
-					</li>
-				</ul>
-			</section>
 			<section class="tsd-panel-group tsd-index-group">
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section tsd-is-not-exported">
-							<h3>Properties</h3>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported"><a href="_state_react_subscribe_.istate.html#value" class="tsd-kind-icon">value</a></li>
+								<li class="tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter"><a href="_state_react_usesubscription_.html#usesubscription" class="tsd-kind-icon">use<wbr>Subscription</a></li>
 							</ul>
 						</section>
 					</div>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-not-exported">
-				<h2>Properties</h2>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-					<a name="value" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagOptional">Optional</span> value</h3>
-					<div class="tsd-signature tsd-kind-icon">value<span class="tsd-signature-symbol">:</span> <a href="../modules/_state_state_.html#imergedstate" class="tsd-signature-type">IMergedState</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/symbioticlabs/green-state/blob/fd3b428/src/state-react/Subscribe.ts#L16">state-react/Subscribe.ts:16</a></li>
-						</ul>
-					</aside>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+					<a name="usesubscription" class="tsd-anchor"></a>
+					<h3>use<wbr>Subscription</h3>
+					<ul class="tsd-signatures tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<li class="tsd-signature tsd-kind-icon">use<wbr>Subscription&lt;T&gt;<span class="tsd-signature-symbol">(</span>getState<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">function</span>, subscriptionKey<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="_state_state_.html#imergedstate" class="tsd-signature-type">IMergedState</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/symbioticlabs/green-state/blob/fd3b428/src/state-react/useSubscription.ts#L5">state-react/useSubscription.ts:5</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>getState: <span class="tsd-signature-type">function</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-siganture">
+											<ul class="tsd-signatures tsd-kind-type-literal tsd-is-not-exported">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">...</span>args<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_state_state_.state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="../classes/_state_state_.state.html" class="tsd-signature-type">State</a></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5><span class="tsd-flag ts-flagRest">Rest</span> <span class="tsd-signature-symbol">...</span>args: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../classes/_state_state_.state.html" class="tsd-signature-type">State</a><span class="tsd-signature-symbol">&gt;</span>
+														<span class="tsd-signature-symbol"> | </span>
+														<a href="../classes/_state_state_.state.html" class="tsd-signature-type">State</a>
+													</h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
+								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagOptional">Optional</span> subscriptionKey: <span class="tsd-signature-type">any</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="_state_state_.html#imergedstate" class="tsd-signature-type">IMergedState</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span>
+								<span class="tsd-signature-symbol"> | </span>
+								<span class="tsd-signature-type">undefined</span>
+							</h4>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -119,101 +146,83 @@
 						<a href="../globals.html"><em>Globals</em></a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ioc_react_dependencycontainercontext_.html">"ioc-<wbr>react/<wbr>Dependency<wbr>Container<wbr>Context"</a>
+						<a href="_ioc_react_dependencycontainercontext_.html">"ioc-<wbr>react/<wbr>Dependency<wbr>Container<wbr>Context"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ioc_react_dependencycontainerreactcontext_.html">"ioc-<wbr>react/<wbr>Dependency<wbr>Container<wbr>React<wbr>Context"</a>
+						<a href="_ioc_react_dependencycontainerreactcontext_.html">"ioc-<wbr>react/<wbr>Dependency<wbr>Container<wbr>React<wbr>Context"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ioc_react_inject_.html">"ioc-<wbr>react/<wbr>Inject"</a>
+						<a href="_ioc_react_inject_.html">"ioc-<wbr>react/<wbr>Inject"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ioc_react_injectandsubscribe_.html">"ioc-<wbr>react/<wbr>Inject<wbr>And<wbr>Subscribe"</a>
+						<a href="_ioc_react_injectandsubscribe_.html">"ioc-<wbr>react/<wbr>Inject<wbr>And<wbr>Subscribe"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ioc_react_useinstance_.html">"ioc-<wbr>react/use<wbr>Instance"</a>
+						<a href="_ioc_react_useinstance_.html">"ioc-<wbr>react/use<wbr>Instance"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ioc_react_withdependencies_.html">"ioc-<wbr>react/with<wbr>Dependencies"</a>
+						<a href="_ioc_react_withdependencies_.html">"ioc-<wbr>react/with<wbr>Dependencies"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_ioc_container_.html">"ioc/<wbr>Container"</a>
+						<a href="_ioc_container_.html">"ioc/<wbr>Container"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_compose_.html">"state-<wbr>react/<wbr>Compose"</a>
+						<a href="_state_react_compose_.html">"state-<wbr>react/<wbr>Compose"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_injectarray_.html">"state-<wbr>react/<wbr>Inject<wbr>Array"</a>
+						<a href="_state_react_injectarray_.html">"state-<wbr>react/<wbr>Inject<wbr>Array"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_injectboolean_.html">"state-<wbr>react/<wbr>Inject<wbr>Boolean"</a>
+						<a href="_state_react_injectboolean_.html">"state-<wbr>react/<wbr>Inject<wbr>Boolean"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_injectfocus_.html">"state-<wbr>react/<wbr>Inject<wbr>Focus"</a>
+						<a href="_state_react_injectfocus_.html">"state-<wbr>react/<wbr>Inject<wbr>Focus"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_injecthover_.html">"state-<wbr>react/<wbr>Inject<wbr>Hover"</a>
+						<a href="_state_react_injecthover_.html">"state-<wbr>react/<wbr>Inject<wbr>Hover"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_injectnumber_.html">"state-<wbr>react/<wbr>Inject<wbr>Number"</a>
+						<a href="_state_react_injectnumber_.html">"state-<wbr>react/<wbr>Inject<wbr>Number"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_injectstring_.html">"state-<wbr>react/<wbr>Inject<wbr>String"</a>
+						<a href="_state_react_injectstring_.html">"state-<wbr>react/<wbr>Inject<wbr>String"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_injecttoggle_.html">"state-<wbr>react/<wbr>Inject<wbr>Toggle"</a>
+						<a href="_state_react_injecttoggle_.html">"state-<wbr>react/<wbr>Inject<wbr>Toggle"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_injectvalue_.html">"state-<wbr>react/<wbr>Inject<wbr>Value"</a>
+						<a href="_state_react_injectvalue_.html">"state-<wbr>react/<wbr>Inject<wbr>Value"</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="_state_react_subscribe_.html">"state-<wbr>react/<wbr>Subscribe"</a>
 					</li>
 					<li class="current tsd-kind-external-module">
-						<a href="../modules/_state_react_subscribe_.html">"state-<wbr>react/<wbr>Subscribe"</a>
+						<a href="_state_react_usesubscription_.html">"state-<wbr>react/use<wbr>Subscription"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_react_usesubscription_.html">"state-<wbr>react/use<wbr>Subscription"</a>
+						<a href="_state_arraystate_.html">"state/<wbr>Array<wbr>State"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_arraystate_.html">"state/<wbr>Array<wbr>State"</a>
+						<a href="_state_booleanstate_.html">"state/<wbr>Boolean<wbr>State"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_booleanstate_.html">"state/<wbr>Boolean<wbr>State"</a>
+						<a href="_state_numberstate_.html">"state/<wbr>Number<wbr>State"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_numberstate_.html">"state/<wbr>Number<wbr>State"</a>
+						<a href="_state_state_.html">"state/<wbr>State"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_state_.html">"state/<wbr>State"</a>
+						<a href="_state_stringstate_.html">"state/<wbr>String<wbr>State"</a>
 					</li>
 					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_stringstate_.html">"state/<wbr>String<wbr>State"</a>
-					</li>
-					<li class=" tsd-kind-external-module">
-						<a href="../modules/_state_valuestate_.html">"state/<wbr>Value<wbr>State"</a>
+						<a href="_state_valuestate_.html">"state/<wbr>Value<wbr>State"</a>
 					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-class tsd-parent-kind-external-module tsd-has-type-parameter">
-						<a href="../classes/_state_react_subscribe_.subscribe.html" class="tsd-kind-icon">Subscribe</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
-						<a href="_state_react_subscribe_.iprops.html" class="tsd-kind-icon">IProps</a>
-					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
-						<a href="_state_react_subscribe_.istate.html" class="tsd-kind-icon">IState</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-not-exported">
-								<a href="_state_react_subscribe_.istate.html#value" class="tsd-kind-icon">value</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
-					<li class=" tsd-kind-interface tsd-parent-kind-external-module tsd-has-type-parameter tsd-is-not-exported">
-						<a href="_state_react_subscribe_.isubscribable.html" class="tsd-kind-icon">ISubscribable</a>
+					<li class=" tsd-kind-function tsd-parent-kind-external-module tsd-has-type-parameter">
+						<a href="_state_react_usesubscription_.html#usesubscription" class="tsd-kind-icon">use<wbr>Subscription</a>
 					</li>
 				</ul>
 			</nav>
