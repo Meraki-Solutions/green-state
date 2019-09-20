@@ -13,6 +13,20 @@ class RootProvider extends DependencyContainerContext {
   }
 }
 
+class RootProviderWithInstance extends DependencyContainerContext {
+  containerMounted(container) {
+    container.registerInstance(InjectedClass, new InjectedClass());
+  }
+}
+
+class ChildProvider extends DependencyContainerContext {
+  containerMounted(container) {
+    const instance = new InjectedClass();
+    instance.value = `${instance.value} FromChild`;
+    container.registerInstance(InjectedClass, instance);
+  }
+}
+
 @withDependencies({ instance: InjectedClass })
 class WithDependenciesComponent extends React.Component<any> {
   render() {
@@ -27,3 +41,21 @@ export const WithDependenciesTest = () => {
     </RootProvider>
   );
 };
+
+export const WithDependenciesFromChildTest = () => {
+  return (
+    <RootProvider>
+      <ChildProvider>
+        <WithDependenciesComponent />
+      </ChildProvider>
+    </RootProvider>
+  );
+};
+
+export const WithDependenciesOverrideParentTest = () => (
+  <RootProviderWithInstance>
+    <ChildProvider>
+        <WithDependenciesComponent />
+    </ChildProvider>
+  </RootProviderWithInstance>
+);

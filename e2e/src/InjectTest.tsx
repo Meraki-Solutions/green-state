@@ -13,10 +13,44 @@ class RootProvider extends DependencyContainerContext {
   }
 }
 
+class RootProviderWithInstance extends DependencyContainerContext {
+  containerMounted(container) {
+    container.registerInstance(InjectedClass, new InjectedClass());
+  }
+}
+
+class ChildProvider extends DependencyContainerContext {
+  containerMounted(container) {
+    const instance = new InjectedClass();
+    instance.value = `${instance.value} FromChild`;
+    container.registerInstance(InjectedClass, instance);
+  }
+}
+
 export const InjectTest = () => (
   <RootProvider>
     <Inject diKey={InjectedClass}>
       {instance => <RenderInstance instance={instance} />}
     </Inject>
   </RootProvider>
+);
+
+export const InjectFromChildTest = () => (
+  <RootProvider>
+    <ChildProvider>
+      <Inject diKey={InjectedClass}>
+        {instance => <RenderInstance instance={instance} />}
+      </Inject>
+    </ChildProvider>
+  </RootProvider>
+);
+
+export const InjectOverrideParentTest = () => (
+  <RootProviderWithInstance>
+    <ChildProvider>
+      <Inject diKey={InjectedClass}>
+        {instance => <RenderInstance instance={instance} />}
+      </Inject>
+    </ChildProvider>
+  </RootProviderWithInstance>
 );
