@@ -4,5 +4,6 @@
         "react",
         "roadmap",
         "unmounts"
-    ]
+    ],
+    "tslint.alwaysShowRuleFailuresAsWarnings": false
 }

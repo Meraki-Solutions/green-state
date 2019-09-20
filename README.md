@@ -815,13 +815,13 @@ import { Container } from '@symbiotic/green-state';
 const container = new Container();
 container.registerInstance(User, new User({ userId: 5, username: 'trevissimo' }));
 
-const childContainer = container.createChild();
-childContainer.registerInstance(Theme, { primaryColor: 'green', secondaryColor: 'black' });
+const ChildProvider = container.createChild();
+ChildProvider.registerInstance(Theme, { primaryColor: 'green', secondaryColor: 'black' });
 
-const user = childContainer.get(User);
+const user = ChildProvider.get(User);
 console.log(user.username); // 'trevissimo' from the parent container
 
-const theme = childContainer.get(Theme);
+const theme = ChildProvider.get(Theme);
 console.log(theme.primaryColor); // 'green' from the child container
 ```
 

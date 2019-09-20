@@ -23,14 +23,14 @@ describe('Container', () => {
 
     it('should resolve in the child container if the requested key is already in the child container', () => {
       const parentContainer = new Container();
-      const childContainer = parentContainer.createChild();
+      const ChildProvider = parentContainer.createChild();
 
       // Add a dependency to the child container
       const childServiceConfig = { version: 'Child Version' };
-      childContainer.registerInstance(ServiceConfig, childServiceConfig);
+      ChildProvider.registerInstance(ServiceConfig, childServiceConfig);
 
       // Ask the child to resolve something that depends on the service we just registered
-      const instance = childContainer.get(ServiceConfig);
+      const instance = ChildProvider.get(ServiceConfig);
 
       // It should have used the dependency we registered
       assert.ok(instance === childServiceConfig);
@@ -38,14 +38,14 @@ describe('Container', () => {
 
     it('should resolve in the child container if it has a dependency that is already in the child container', () => {
       const parentContainer = new Container();
-      const childContainer = parentContainer.createChild();
+      const ChildProvider = parentContainer.createChild();
 
       // Add a dependency to the child container
       const childServiceConfig = { version: 'Child Version' };
-      childContainer.registerInstance(ServiceConfig, childServiceConfig);
+      ChildProvider.registerInstance(ServiceConfig, childServiceConfig);
 
       // Ask the child to resolve something that depends on the service we just registered
-      const instance = childContainer.get(Service);
+      const instance = ChildProvider.get(Service);
 
       // It should have used the dependency we registered
       assert.ok(instance.config === childServiceConfig);
@@ -53,17 +53,17 @@ describe('Container', () => {
 
     it('should resolve in the child container when it overrides an instance in the parent', () => {
       const parentContainer = new Container();
-      const childContainer = parentContainer.createChild();
+      const ChildProvider = parentContainer.createChild();
 
       // Add a dependency to the parent container
       const parentServiceConfig = { version: 'Parent Version' };
       parentContainer.registerInstance(ServiceConfig, parentServiceConfig);
 
       // Add a dependency to the child container
-      childContainer.autoRegister(ServiceConfig);
+      ChildProvider.autoRegister(ServiceConfig);
 
       // Ask the child to resolve something that depends on the service we just registered
-      const instance = childContainer.get(ServiceConfig);
+      const instance = ChildProvider.get(ServiceConfig);
 
       // It should have used the dependency we registered
       assert.ok(instance !== parentServiceConfig);
@@ -71,12 +71,12 @@ describe('Container', () => {
 
     it('should resolve in the parent container if the request key has a dependency in the parent container', () => {
       const parentContainer = new Container();
-      const childContainer = parentContainer.createChild();
+      const ChildProvider = parentContainer.createChild();
       const config = new ServiceConfig();
       parentContainer.registerInstance(ServiceConfig, config);
 
       // Ask the child to resolve something that already exists in the parent
-      const instance = childContainer.get(ServiceConfig);
+      const instance = ChildProvider.get(ServiceConfig);
 
       assert.ok(instance === config);
     });
@@ -206,7 +206,7 @@ describe('Container', () => {
 
     it('should NOT call the dispose method on keys that are resolved in the parent container but not the child', () => {
       const parentContainer = new Container();
-      const childContainer = parentContainer.createChild();
+      const ChildProvider = parentContainer.createChild();
 
       class ClassToDispose {
         constructor(private onDispose: () => void) {}
@@ -217,7 +217,7 @@ describe('Container', () => {
       let wasDisposeCalled = false;
       parentContainer.registerInstance(ClassToDispose, new ClassToDispose(() => { wasDisposeCalled = true; }));
 
-      childContainer.dispose();
+      ChildProvider.dispose();
 
       assert.ok(!wasDisposeCalled, 'Expected dispose NOT to have been called but it was');
     });
