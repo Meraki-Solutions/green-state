@@ -2,3 +2,4 @@
 dist
 node_modules
 docs
+e2e/cypress/videos/
