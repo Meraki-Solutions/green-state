@@ -32,7 +32,7 @@ export class Inject extends Component<IProps, IState> {
 
     const value = keysToInject.map(key => this.context.container.get(key));
 
-    this.setState({ value });
+    this.setState({ value: undefined });
   }
 
   render() {

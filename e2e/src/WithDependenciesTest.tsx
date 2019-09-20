@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { DependencyContainerContext, Inject } from '@symbiotic/green-state';
+import { DependencyContainerContext, withDependencies } from '@symbiotic/green-state';
 import { RenderInstance } from './RenderInstance';
 
 class InjectedClass {
   title: string = 'With Dependencies';
-  value: string = 'dependency';
+  value: string = 'withDependencies';
 }
 
 class RootProvider extends DependencyContainerContext {
@@ -13,10 +13,17 @@ class RootProvider extends DependencyContainerContext {
   }
 }
 
-export const WithDependenciesTest = () => (
-  <RootProvider>
-    <Inject diKey={InjectedClass}>
-      {instance => <RenderInstance instance={instance} />}
-    </Inject>
-  </RootProvider>
-);
+@withDependencies({ instance: InjectedClass })
+class WithDependenciesComponent extends React.Component<any> {
+  render() {
+    return <RenderInstance instance={this.props.instance} />;
+  }
+}
+
+export const WithDependenciesTest = () => {
+  return (
+    <RootProvider>
+      <WithDependenciesComponent />
+    </RootProvider>
+  );
+};

@@ -3,9 +3,11 @@
   "scripts": {
     "start": "parcel src/index.html",
     "cy:run": "cypress run",
+    "cy:watch": "cypress open",
     "test": "npm install && start-server-and-test start http://localhost:1234 cy:run"
   },
   "dependencies": {
+    "@symbiotic/green-state": "file:../",
     "@types/react": "^16.9.2",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^4.3.5",

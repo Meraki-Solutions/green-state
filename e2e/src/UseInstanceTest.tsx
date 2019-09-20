@@ -4,7 +4,7 @@ import { RenderInstance } from './RenderInstance';
 
 class InjectedClass {
   title: string = 'Use Instance';
-  value: string = 'instance';
+  value: string = 'useInstance';
 }
 
 class RootProvider extends DependencyContainerContext {
