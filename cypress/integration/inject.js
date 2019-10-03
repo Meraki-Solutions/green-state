@@ -43,6 +43,10 @@ describe('Injecting a dependency', () => {
   // See https://github.com/bahmutov/cypress-react-unit-test/issues/51#issuecomment-494076389
   beforeEach(() => fixReactDOMScope(window));
 
+  // May want to implement these for each inject provider
+  it.skip('must have a root IOC provider');
+  it.skip('hierarchical containers dispose instances');
+
   describe('<Inject> component', () => {
 
     const SUT = ({ diKey, children }) => (
@@ -114,6 +118,8 @@ describe('Injecting a dependency', () => {
         .should('be.equal', childInstance)
         .should('not.be.equal', parentInstance);
     });
+
+    it.skip('can inject multiple values');
 
   });
 
@@ -265,6 +271,8 @@ describe('Injecting a dependency', () => {
         .should('be.equal', childInstance)
         .should('not.be.equal', parentInstance);
     });
+
+    it.skip('can inject multiple values');
 
   });
 
