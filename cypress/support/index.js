@@ -28,3 +28,8 @@ export function fixReactDOMScope(win) {
     win.ReactDOM = ReactDOM;
   }
 }
+
+export * from './RenderPropsSpy';
+export * from './DeferredValue';
+export * from './ContainerContext';
+export * from './ContainerContextWithValue';
