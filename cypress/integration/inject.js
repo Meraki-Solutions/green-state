@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Inject, useInstance, DependencyContainerContext } from '../support/sut';
-import { fixReactDomScope } from '../support';
+import { Inject, useInstance, DependencyContainerContext, withDependencies } from '../support/sut';
+import { fixReactDOMScope } from '../support';
 
 class MyDependencyContainerContext extends DependencyContainerContext {
 	containerMounted() {
@@ -24,6 +24,17 @@ function UseInstanceTestHarness({ diKey, children }) {
 	return children(instance);
 }
 
+function createWithDependenciesTestHarness(diKey, propName = 'myInstance') {
+	function WithDependenciesTestHarnessTestHarness(props) {
+		return props.children(props[propName]);
+	}
+
+	return withDependencies({
+		[propName]: diKey
+	})(WithDependenciesTestHarnessTestHarness);
+}
+
+
 class MyClass {
 	constructor() {
 		this.foo = `Bar ${Date.now()}`;
@@ -33,7 +44,7 @@ class MyClass {
 describe('Injecting a dependency', () => {
 
 	// See https://github.com/bahmutov/cypress-react-unit-test/issues/51#issuecomment-494076389
-	beforeEach(() => fixReactDomScope(window));
+	beforeEach(() => fixReactDOMScope(window));
 
 	describe('<Inject> component', () => {
 
@@ -51,8 +62,9 @@ describe('Injecting a dependency', () => {
 				</MyDependencyContainerContext>
 			);
 
-			cy.then(() => instance)
-					.should('be.instanceOf', MyClass);
+			cy.wrap().should(() => {
+				expect(instance).to.be.instanceOf(MyClass)
+			});
 		});
 
 	});
@@ -73,8 +85,35 @@ describe('Injecting a dependency', () => {
 				</MyDependencyContainerContext>
 			);
 
-			cy.then(() => instance)
-					.should('be.instanceOf', MyClass);
+			cy.wrap().should(() => {
+				expect(instance).to.be.instanceOf(MyClass)
+			});
+		});
+
+	});
+
+	describe('withDependencies HOC', () => {
+
+		it('can get an instance', () => {
+			// Need to create it at runtime b/c HOC and can't know diKey value until then
+			const WithDependenciesTestHarnessTestHarness = createWithDependenciesTestHarness(MyClass);
+
+			let instance;
+
+			cy.mount(
+				<MyDependencyContainerContext>
+					<WithDependenciesTestHarnessTestHarness>
+						{(_instance) => {
+							instance = _instance;
+							return null;
+						}}
+					</WithDependenciesTestHarnessTestHarness>
+				</MyDependencyContainerContext>
+			);
+
+			cy.wrap().should(() => {
+				expect(instance).to.be.instanceOf(MyClass)
+			});
 		});
 
 	});

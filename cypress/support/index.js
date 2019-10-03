@@ -23,7 +23,7 @@ Cypress.on('window:load', win => {
   win.ReactDOM = window.ReactDOM || window.ReactDOM;
 });
 
-export function fixReactDomScope(win) {
+export function fixReactDOMScope(win) {
   if (win.ReactDOM !== ReactDOM) {
     win.ReactDOM = ReactDOM;
   }
