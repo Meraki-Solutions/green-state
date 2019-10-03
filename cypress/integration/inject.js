@@ -1,43 +1,40 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
 import { Inject, useInstance, DependencyContainerContext, withDependencies } from '../support/sut';
 import { fixReactDOMScope } from '../support';
 
-class MyDependencyContainerContext extends DependencyContainerContext {
+class ContainerContext extends DependencyContainerContext {
 	containerMounted() {
 		// nuffin
 	}
 }
 
-class InjectTestHarness extends React.Component {
-	render() {
-		return (
-				<Inject diKey={this.props.diKey}>
-					{this.props.children}
-				</Inject>
-		);
+class ContainerContextWithValue extends DependencyContainerContext {
+	containerMounted(container) {
+		container.registerInstance(this.props.diKey, this.props.value);
 	}
 }
 
-function UseInstanceTestHarness({ diKey, children }) {
-	const instance = useInstance(diKey);
-	return children(instance);
-}
+// We only do identity checks, so doesn't need any properties
+class MyClass {}
 
-function createWithDependenciesTestHarness(diKey, propName = 'myInstance') {
-	function WithDependenciesTestHarnessTestHarness(props) {
-		return props.children(props[propName]);
-	}
-
-	return withDependencies({
-		[propName]: diKey
-	})(WithDependenciesTestHarnessTestHarness);
-}
-
-
-class MyClass {
+class DeferredValue {
 	constructor() {
-		this.foo = `Bar ${Date.now()}`;
+		this.set = value => this.value = value;
+	}
+}
+
+class RenderPropsSpy {
+	constructor(content) {
+
+		this.content = content;
+
+		this.render = (...props) => {
+			this.firstProp = props[0];
+			this.props = props;
+
+			return content ? <p>{content}</p> : null;
+		};
+
 	}
 }
 
@@ -48,23 +45,74 @@ describe('Injecting a dependency', () => {
 
 	describe('<Inject> component', () => {
 
-		it('can get an instance', () => {
-			let instance;
+		const SUT = ({ diKey, children }) => (
+			<Inject diKey={diKey}>
+				{children}
+			</Inject>
+		);
 
-			cy.mount(
-				<MyDependencyContainerContext>
-					<InjectTestHarness diKey={MyClass}>
-						{_instance => {
-							instance = _instance;
-							return null;
-						}}
-					</InjectTestHarness>
-				</MyDependencyContainerContext>
+		it('can get an instance', () => {
+			const renderPropsSpy = new RenderPropsSpy('Hi there!');
+
+			const App = (
+				<ContainerContext>
+					<SUT diKey={MyClass}>
+						{renderPropsSpy.render}
+					</SUT>
+				</ContainerContext>
 			);
 
-			cy.wrap().should(() => {
-				expect(instance).to.be.instanceOf(MyClass)
-			});
+			cy.mount(App);
+
+			cy.wrap(renderPropsSpy)
+				.its('firstProp')
+				.should('be.instanceOf', MyClass);
+
+			cy.contains(renderPropsSpy.content)
+		});
+
+		it('can get an instance from a child container', () => {
+			const renderPropsSpy = new RenderPropsSpy();
+			const childInstance = new MyClass();
+
+			const App = (
+				<ContainerContext>
+					<ContainerContextWithValue diKey={MyClass} value={childInstance}>
+						<SUT diKey={MyClass}>
+							{renderPropsSpy.render}
+						</SUT>
+					</ContainerContextWithValue>
+				</ContainerContext>
+			);
+
+			cy.mount(App);
+
+			cy.wrap(renderPropsSpy)
+				.its('firstProp')
+				.should('be.equal', childInstance);
+		});
+
+		it('can get an instance from a child container overriding the parent', () => {
+			const renderPropsSpy = new RenderPropsSpy();
+			const parentInstance = new MyClass();
+			const childInstance = new MyClass();
+
+			const App = (
+				<ContainerContextWithValue diKey={MyClass} value={parentInstance}>
+					<ContainerContextWithValue diKey={MyClass} value={childInstance}>
+						<SUT diKey={MyClass}>
+							{renderPropsSpy.render}
+						</SUT>
+					</ContainerContextWithValue>
+				</ContainerContextWithValue>
+			)
+
+			cy.mount(App);
+
+			cy.wrap(renderPropsSpy)
+				.its('firstProp')
+				.should('be.equal', childInstance)
+				.should('not.be.equal', parentInstance);
 		});
 
 	});
@@ -72,22 +120,72 @@ describe('Injecting a dependency', () => {
 	describe('useInstance hook', () => {
 
 		it('can get an instance', () => {
-			let instance;
+			const instance = new DeferredValue();
 
-			cy.mount(
-				<MyDependencyContainerContext>
-					<UseInstanceTestHarness diKey={MyClass}>
-						{_instance => {
-							instance = _instance;
-							return null;
-						}}
-					</UseInstanceTestHarness>
-				</MyDependencyContainerContext>
+			const SUT = () => {
+				instance.set(useInstance(MyClass));
+				return null;
+			};
+
+			const App = (
+				<ContainerContext>
+					<SUT />
+				</ContainerContext>
 			);
 
-			cy.wrap().should(() => {
-				expect(instance).to.be.instanceOf(MyClass)
-			});
+			cy.mount(App);
+
+			cy.wrap(instance)
+				.its('value')
+				.should('be.instanceOf', MyClass);
+		});
+
+		it('can get an instance from a child container', () => {
+			const instance = new DeferredValue();
+			const childInstance = new MyClass();
+
+			const SUT = () => {
+				instance.set(useInstance(MyClass));
+				return null;
+			};
+
+			const App = (
+				<ContainerContext>
+					<ContainerContextWithValue diKey={MyClass} value={childInstance}>
+						<SUT />
+					</ContainerContextWithValue>
+				</ContainerContext>
+			);
+
+			cy.mount(App);
+
+			cy.wrap(instance)
+				.its('value')
+				.should('be.equal', childInstance);
+		});
+
+		it('can get an instance from a child container overriding the parent', () => {
+			const instance = new DeferredValue();
+			const parentInstance = new MyClass();
+			const childInstance = new MyClass();
+
+			const SUT = () => {
+				instance.set(useInstance(MyClass));
+				return null;
+			};
+
+			cy.mount(
+				<ContainerContextWithValue diKey={MyClass} value={parentInstance}>
+					<ContainerContextWithValue diKey={MyClass} value={childInstance}>
+						<SUT />
+					</ContainerContextWithValue>
+				</ContainerContextWithValue>
+			);
+
+			cy.wrap(instance)
+				.its('value')
+				.should('be.equal', childInstance)
+				.should('not.be.equal', parentInstance);
 		});
 
 	});
@@ -95,25 +193,77 @@ describe('Injecting a dependency', () => {
 	describe('withDependencies HOC', () => {
 
 		it('can get an instance', () => {
-			// Need to create it at runtime b/c HOC and can't know diKey value until then
-			const WithDependenciesTestHarnessTestHarness = createWithDependenciesTestHarness(MyClass);
+			const instance = new DeferredValue();
 
-			let instance;
+			let SUT = ({ myInstance }) => {
+				instance.set(myInstance);
+				return null;
+			};
+			SUT = withDependencies({ myInstance: MyClass })(SUT);
 
-			cy.mount(
-				<MyDependencyContainerContext>
-					<WithDependenciesTestHarnessTestHarness>
-						{(_instance) => {
-							instance = _instance;
-							return null;
-						}}
-					</WithDependenciesTestHarnessTestHarness>
-				</MyDependencyContainerContext>
+			const App = (
+				<ContainerContext>
+					<SUT />
+				</ContainerContext>
 			);
 
-			cy.wrap().should(() => {
-				expect(instance).to.be.instanceOf(MyClass)
-			});
+			cy.mount(App);
+
+			cy.wrap(instance)
+				.its('value')
+				.should('be.instanceOf', MyClass);
+		});
+
+		it('can get an instance from a child container', () => {
+			const instance = new DeferredValue();
+			const childInstance = new MyClass();
+
+			let SUT = ({ myInstance }) => {
+				instance.set(myInstance);
+				return null;
+			};
+			SUT = withDependencies({ myInstance: MyClass })(SUT);
+
+			const App = (
+				<ContainerContext>
+					<ContainerContextWithValue diKey={MyClass} value={childInstance}>
+						<SUT />
+					</ContainerContextWithValue>
+				</ContainerContext>
+			);
+
+			cy.mount(App);
+
+			cy.wrap(instance)
+				.its('value')
+				.should('be.equal', childInstance);
+		});
+
+		it('can get an instance from a child container overriding the parent', () => {
+			const instance = new DeferredValue();
+			const parentInstance = new MyClass();
+			const childInstance = new MyClass();
+
+			let SUT = ({ myInstance }) => {
+				instance.set(myInstance);
+				return null;
+			};
+			SUT = withDependencies({ myInstance: MyClass })(SUT);
+
+			const App = (
+				<ContainerContextWithValue diKey={MyClass} value={parentInstance}>
+					<ContainerContextWithValue diKey={MyClass} value={childInstance}>
+						<SUT />
+					</ContainerContextWithValue>
+				</ContainerContextWithValue>
+			);
+
+			cy.mount(App);
+
+			cy.wrap(instance)
+				.its('value')
+				.should('be.equal', childInstance)
+				.should('not.be.equal', parentInstance);
 		});
 
 	});
