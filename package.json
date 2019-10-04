@@ -16,7 +16,7 @@
     "lint": "tslint -p tsconfig.json",
     "prepublishOnly": "npm run test && npm run lint && npm run build",
     "e2e": "cypress run",
-    "e2e:open": "cypress open"
+    "e2e:watch": "cypress open"
   },
   "keywords": [
     "state",
