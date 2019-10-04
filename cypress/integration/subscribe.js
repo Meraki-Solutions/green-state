@@ -1,65 +1,13 @@
 import React from 'react'
-import { fixReactDOMScope, DeferredValue } from '../support';
-import { StringState, State, Subscribe } from '../support/sut';
-
-class StateRenderPropsSpy {
-	constructor(content = null) {
-
-		this.content = content;
-		this.states = [];
-
-		this.renderCount = 0;
-
-		this.render = state => {
-			this.states.push(state);
-			this.renderCount++;
-
-			return this.content;
-		};
-
-		this.getMostRecentState = () => {
-			if (!this.states.length) {
-				// Cypress won't retry on undefined or undefined, so throw
-				throw new Error('No states!')
-			}
-
-			return this.states[this.states.length - 1];
-		}
-	}
-}
-
-class ExternallyResolvablePromise {
-
-	constructor() {
-
-		let resolve;
-		const promise = new Promise(_resolve => {
-			resolve = _resolve;
-		});
-
-		this.then = (cb) => promise.then(cb);
-		this.catch = (cb) => promise.catch(cb);
-		this.resolve = value => resolve(value);
-
-	}
-
-}
-
-class ToggleChildrenComponent extends React.Component {
-	state = {
-		showChildren: true
-	}
-
-	unmountChildren = () => this.setState({ showChildren: false });
-
-	render() {
-		if (!this.state.showChildren) {
-			return null;
-		}
-
-		return this.props.children;
-	}
-}
+import {
+	fixReactDOMScope,
+	DeferredValue,
+	ExternallyResolvablePromise,
+	StateHistorySpy,
+	StateRenderPropsSpy,
+	ToggleChildrenComponent
+} from '../support';
+import { StringState, State, Subscribe, useSubscription } from '../support/sut';
 
 describe('Subscribing to state', () => {
 
@@ -137,7 +85,7 @@ describe('Subscribing to state', () => {
 
 			cy.wrap(renderPropsSpy).its('states').should('have.length', 0);
 
-		  cy.then(() => {
+			cy.then(() => {
 				statePromise.resolve(state);
 			});
 
@@ -233,7 +181,7 @@ describe('Subscribing to state', () => {
 			cy.get(SUT)
 				.invoke('setState', { value: 'anything else' });
 
-		  // For some reason this line makes it pass in electron
+			// For some reason this line makes it pass in electron
 			cy.wrap(renderPropsSpy)
 				.its('renderCount')
 				.should('equal', 2);
@@ -279,6 +227,179 @@ describe('Subscribing to state', () => {
 
 	describe('useSubscription hook', () => {
 
+		it('always gets undefined the first time because of hooks API', () => {
+			const state = new State();
+			const stateHistorySpy = new StateHistorySpy();
+
+			const SUT = () => {
+				const currentState = useSubscription(() => state);
+				stateHistorySpy.push(currentState);
+
+				return null;
+			};
+
+			cy.mount(<SUT />);
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getMostRecentState')
+				.should('be.undefined');
+		});
+
+		it('can get the initial value', () => {
+			const state = new State({ value: 'initial value' });
+			const stateHistorySpy = new StateHistorySpy();
+
+			const SUT = () => {
+				const currentState = useSubscription(() => state);
+				stateHistorySpy.push(currentState);
+
+				return null;
+			};
+
+			cy.mount(<SUT />);
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getCount')
+				.should('equal', 2);
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getMostRecentState')
+				.its('value')
+				.should('equal', 'initial value');
+		});
+
+		it(`when getState is async, renders when it resolves`, () => {
+			const state = new State({ value: 'The async value' });
+			const statePromise = new ExternallyResolvablePromise();
+			const stateHistorySpy = new StateHistorySpy();
+
+			const SUT = () => {
+				const currentState = useSubscription(() => statePromise);
+				stateHistorySpy.push(currentState);
+
+				return null;
+			};
+
+			cy.mount(<SUT />);
+
+			statePromise.resolve(state);
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getCount')
+				.should('equal', 2);
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getMostRecentState')
+				.its('value')
+				.should('equal', 'The async value');
+		});
+
+		it(`renders when state changes`, () => {
+			const state = new State({ value: 'The async value' });
+			const stateHistorySpy = new StateHistorySpy();
+
+			const SUT = () => {
+				const currentState = useSubscription(() => state);
+				stateHistorySpy.push(currentState);
+
+				return null;
+			};
+
+			cy.mount(<SUT />);
+
+			state.setState({ value: 'Another value' });
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getCount')
+				.should('equal', 2);
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getMostRecentState')
+				.its('value')
+				.should('equal', 'Another value');
+		});
+
+		it(`unsubscribes on unmount`, () => {
+			const state = new State();
+
+			const SUT = () => {
+				useSubscription(() => state);
+
+				return null;
+			};
+
+			const App = (
+				<ToggleChildrenComponent>
+					<SUT />
+				</ToggleChildrenComponent>
+			);
+
+			cy.mount(App);
+
+			cy.wrap(state)
+				.its('subscriptions')
+				.should('have.length', 1);
+
+			cy.get(App)
+				.invoke('unmountChildren');
+
+			cy.wrap(state)
+				.its('subscriptions')
+				.should('have.length', 0);
+		});
+
+		// Couldn't get this test to pass
+		it.skip(`re-subscribes when subscriptionKey changes`, () => {
+			let stateCount = 0;
+			const getState = () => {
+				stateCount++;
+				return new State({ value: stateCount === 1 ? 'First State' : 'Re-subscribed State' });
+			};
+			const stateHistorySpy = new StateHistorySpy();
+
+			const SUT = ({ subscriptionKeyValue }) => {
+				console.log(subscriptionKeyValue);
+				const currentState = useSubscription(getState, subscriptionKeyValue);
+				stateHistorySpy.push(currentState);
+
+				return null;
+			};
+
+			class App extends React.Component {
+				state = { value: 'anything' }
+
+				render() {
+					return (
+						<SUT subscriptionKeyValue={this.state.value} />
+					);
+				}
+			}
+
+			cy.mount(<App />)
+
+			// Should have the initial state
+			cy.wrap(stateHistorySpy)
+				.invoke('getCount')
+				.should('equal', 2);
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getMostRecentState')
+				.its('value')
+				.should('equal', 'First State');
+
+			// Change the state used as Subscribe.key
+			cy.get(App)
+				.invoke('setState', { value: 'anything else' });
+
+			cy.wrap(stateHistorySpy)
+				.invoke('getCount')
+				.should('equal', 3);
+
+			cy.wrap(stateHistorySpy, { timeout: 20000 })
+				.invoke('getMostRecentState')
+				.its('value')
+				.should('equal', 'Re-subscribed State');
+		});
 
 	});
 
