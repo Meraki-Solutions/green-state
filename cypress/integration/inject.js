@@ -44,11 +44,14 @@ describe('Injecting a dependency', () => {
   it.skip('hierarchical containers dispose instances');
 
   describe('<Inject> component', () => {
-
     const SUT = Inject;
+    let renderPropsSpy;
+
+    beforeEach(() => {
+      renderPropsSpy = Sinon.stub().returns(<p>Hi there!</p>)
+    });
 
     it('can get an instance', () => {
-      const renderPropsSpy = Sinon.stub().returns(<p>Hi there!</p>)
       const App = (
         <ContainerContext>
           <SUT diKey={MyClass}>
@@ -69,7 +72,6 @@ describe('Injecting a dependency', () => {
     });
 
     it('can get an instance from a child container', () => {
-      const renderPropsSpy = Sinon.stub().returns(null);
       const childInstance = new MyClass();
 
       const App = (
@@ -90,7 +92,6 @@ describe('Injecting a dependency', () => {
     });
 
     it('can get an instance from a child container overriding the parent', () => {
-      const renderPropsSpy = Sinon.stub().returns(null);
       const parentInstance = new MyClass();
       const childInstance = new MyClass();
 
@@ -116,16 +117,21 @@ describe('Injecting a dependency', () => {
   });
 
   describe('useInstance hook', () => {
+    let instanceSpy,
+        SUT;
 
-    it('can get an instance', () => {
-      const instanceSpy = Sinon.spy();
+    beforeEach(() => {
+      instanceSpy = Sinon.spy();
 
-      const SUT = () => {
+      SUT = () => {
         const instance = useInstance(MyClass);
         instanceSpy(instance);
         return null;
       };
 
+    });
+
+    it('can get an instance', () => {
       const App = (
         <ContainerContext>
           <SUT />
@@ -140,14 +146,7 @@ describe('Injecting a dependency', () => {
     });
 
     it('can get an instance from a child container', () => {
-      const instanceSpy = Sinon.spy();
       const childInstance = new MyClass();
-
-      const SUT = () => {
-        const instance = useInstance(MyClass);
-        instanceSpy(instance);
-        return null;
-      };
 
       const App = (
         <ContainerContext>
@@ -165,15 +164,8 @@ describe('Injecting a dependency', () => {
     });
 
     it('can get an instance from a child container overriding the parent', () => {
-      const instanceSpy = Sinon.spy();
       const parentInstance = new MyClass();
       const childInstance = new MyClass();
-
-      const SUT = () => {
-        const instance = useInstance(MyClass);
-        instanceSpy(instance);
-        return null;
-      };
 
       cy.mount(
         <ContainerContextWithValue diKey={MyClass} value={parentInstance}>
@@ -191,16 +183,24 @@ describe('Injecting a dependency', () => {
   });
 
   describe('withDependencies HOC', () => {
+    let instanceSpy,
+      SUT;
 
-    it('can get an instance', () => {
-			const instanceSpy = Sinon.spy();
+    beforeEach(() => {
+      instanceSpy = Sinon.spy();
 
-      let SUT = ({ myInstance }) => {
+      // base component is a simply a component that spies on the contstructor props
+      SUT = ({ myInstance }) => {
         instanceSpy(myInstance);
         return null;
       };
+
+      // now use the HOC to inject MyClass
       SUT = withDependencies({ myInstance: MyClass })(SUT);
 
+    });
+
+    it('can get an instance', () => {
       const App = (
         <ContainerContext>
           <SUT />
@@ -215,14 +215,7 @@ describe('Injecting a dependency', () => {
     });
 
     it('can get an instance from a child container', () => {
-      const instanceSpy = Sinon.spy();
       const childInstance = new MyClass();
-
-      let SUT = ({ myInstance }) => {
-        instanceSpy(myInstance);
-        return null;
-      };
-      SUT = withDependencies({ myInstance: MyClass })(SUT);
 
       const App = (
         <ContainerContext>
@@ -240,15 +233,8 @@ describe('Injecting a dependency', () => {
     });
 
     it('can get an instance from a child container overriding the parent', () => {
-      const instanceSpy = Sinon.spy();
       const parentInstance = new MyClass();
       const childInstance = new MyClass();
-
-      let SUT = ({ myInstance }) => {
-        instanceSpy(myInstance);
-        return null;
-      };
-      SUT = withDependencies({ myInstance: MyClass })(SUT);
 
       const App = (
         <ContainerContextWithValue diKey={MyClass} value={parentInstance}>
