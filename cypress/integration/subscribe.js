@@ -1,7 +1,6 @@
 import React from 'react'
 import {
   fixReactDOMScope,
-  DeferredValue,
   ExternallyResolvablePromise,
   ToggleChildrenComponent,
   mount
@@ -169,30 +168,30 @@ describe('Subscribing to state', () => {
     // Hopefully cypress gets newer version of electron soon?
     // https://github.com/cypress-io/cypress/pull/4720
     it.skip(`when props.dispose is set, state.dispose is called on unmount`, () => {
-      const state = new State();
-      const disposeCalled = new DeferredValue();
-      state.dispose = () => disposeCalled.set(true);
+      // const state = new State();
+      // const disposeCalled = new DeferredValue();
+      // state.dispose = () => disposeCalled.set(true);
 
-      const SUT = () => (
-          <Subscribe to={() => state} dispose={true}>
-            {() => null}
-          </Subscribe>
-      );
+      // const SUT = () => (
+      //     <Subscribe to={() => state} dispose={true}>
+      //       {() => null}
+      //     </Subscribe>
+      // );
 
-      const App = (
-        <ToggleChildrenComponent>
-          <SUT />
-        </ToggleChildrenComponent>
-      );
+      // const App = (
+      //   <ToggleChildrenComponent>
+      //     <SUT />
+      //   </ToggleChildrenComponent>
+      // );
 
-      cy.mount(App);
+      // cy.mount(App);
 
-      cy.get(App)
-        .invoke('unmountChildren');
+      // cy.get(App)
+      //   .invoke('unmountChildren');
 
-      cy.wrap(disposeCalled)
-        .invoke('valueOf')
-        .should('be.true');
+      // cy.wrap(disposeCalled)
+      //   .invoke('valueOf')
+      //   .should('be.true');
     });
 
   });
