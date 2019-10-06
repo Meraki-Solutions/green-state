@@ -47,8 +47,7 @@ describe('Injecting a dependency', () => {
 		const SUT = Inject;
 
 		it('can get an instance', () => {
-			const renderPropsSpy = new RenderPropsSpy('Hi there!');
-
+			const renderPropsSpy = new RenderPropsSpy(<p>Hi there!</p>);
 			const App = (
 				<ContainerContext>
 					<SUT diKey={MyClass}>
@@ -63,7 +62,7 @@ describe('Injecting a dependency', () => {
 				.its('firstProp')
 				.should('be.instanceOf', MyClass);
 
-			cy.contains(renderPropsSpy.content)
+			cy.get('@mountedElement').should('have.html', '<p>Hi there!</p>');
 		});
 
 		it('can get an instance from a child container', () => {
