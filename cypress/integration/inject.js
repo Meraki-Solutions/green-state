@@ -17,11 +17,7 @@ describe('Injecting a dependency', () => {
 
 	describe('<Inject> component', () => {
 
-		const SUT = ({ diKey, children }) => (
-			<Inject diKey={diKey}>
-				{children}
-			</Inject>
-		);
+		const SUT = Inject;
 
 		it('can get an instance', () => {
 			const renderPropsSpy = new RenderPropsSpy('Hi there!');
