@@ -5,8 +5,10 @@ import {
   ExternallyResolvablePromise,
   StateHistorySpy,
   StateRenderPropsSpy,
-  ToggleChildrenComponent
+  ToggleChildrenComponent,
+  mount
 } from '../support';
+import Sinon from 'sinon';
 import { StringState, State, Subscribe, useSubscription } from '../support/sut';
 
 describe('Subscribing to state', () => {
@@ -17,40 +19,35 @@ describe('Subscribing to state', () => {
   describe('<Subscribe> component', () => {
 
     it('can get the initial value', () => {
-
       const state = new State({ value: 'The initial value' });
-      const renderPropsSpy = new StateRenderPropsSpy();
+      const renderPropsSpy = Sinon.stub().returns(null);
 
       const SUT = () => (
         <Subscribe to={() => state}>
-          {renderPropsSpy.render}
+          {renderPropsSpy}
         </Subscribe>
       );
 
       cy.mount(<SUT />);
 
-      cy.wrap(renderPropsSpy)
-        .its('states')
-        .should('have.length', 1);
-
-      cy.wrap(renderPropsSpy)
-        .its('states.0')
-        .should('deep.equal', { value: 'The initial value' });
+      cy.then(() => {
+        assert.equal(renderPropsSpy.callCount, 1);
+        assert.ok(renderPropsSpy.firstCall.calledWith({ value: 'The initial value' }));
+      });
     });
 
     it('can render the children', () => {
       const state = new State({ doesnt: 'matter' });
-      const renderPropsSpy = new StateRenderPropsSpy('Hi there!');
+      const renderPropsSpy = Sinon.stub().returns(<p>Hi There!</p>)
 
       const SUT = () => (
         <Subscribe to={() => state}>
-          {renderPropsSpy.render}
+          {renderPropsSpy}
         </Subscribe>
       );
 
-      cy.mount(<SUT />);
-
-      cy.contains(renderPropsSpy.content);
+      mount(<SUT />)
+        .should('have.html', '<p>Hi There!</p>');
     });
 
     it(`doesn't render when there is no initial value`, () => {

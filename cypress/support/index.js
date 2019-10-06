@@ -37,3 +37,4 @@ export * from './ExternallyResolvablePromise';
 export * from './StateHistorySpy';
 export * from './StateRenderPropsSpy';
 export * from './ToggleChildrenComponent';
+export * from './mount';
