@@ -3,7 +3,6 @@ import {
   fixReactDOMScope,
   DeferredValue,
   ExternallyResolvablePromise,
-  StateHistorySpy,
   ToggleChildrenComponent,
   mount
 } from '../support';
@@ -306,12 +305,11 @@ describe('Subscribing to state', () => {
         stateCount++;
         return new State({ value: stateCount === 1 ? 'First State' : 'Re-subscribed State' });
       };
-      const stateHistorySpy = new StateHistorySpy();
 
       const SUT = ({ subscriptionKeyValue }) => {
         console.log(subscriptionKeyValue);
         const currentState = useSubscription(getState, subscriptionKeyValue);
-        stateHistorySpy.push(currentState);
+        stateHistorySpy(currentState);
 
         return null;
       };
