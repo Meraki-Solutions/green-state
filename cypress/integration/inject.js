@@ -2,6 +2,7 @@ import React from 'react'
 import { Inject, useInstance, withDependencies } from '../support/sut';
 import { ContainerContext, ContainerContextWithValue, DeferredValue, RenderPropsSpy } from '../support';
 import { fixReactDOMScope } from '../support';
+import Sinon from 'sinon';
 
 // We only do identity checks, so doesn't need any properties
 class MyClass { }
@@ -47,11 +48,11 @@ describe('Injecting a dependency', () => {
 		const SUT = Inject;
 
 		it('can get an instance', () => {
-			const renderPropsSpy = new RenderPropsSpy(<p>Hi there!</p>);
+			const renderPropsSpy = Sinon.stub().returns(<p>Hi there!</p>)
 			const App = (
 				<ContainerContext>
 					<SUT diKey={MyClass}>
-						{renderPropsSpy.render}
+						{renderPropsSpy}
 					</SUT>
 				</ContainerContext>
 			);
@@ -59,21 +60,23 @@ describe('Injecting a dependency', () => {
 			mount(App).as('mountedElement');
 
 			cy.wrap(renderPropsSpy)
-				.its('firstProp')
-				.should('be.instanceOf', MyClass);
+				.its('callCount').should('be', 1)
+				.then(() => {
+					assert.ok(renderPropsSpy.firstCall.args[0] instanceof MyClass, 'expected spy to get called with an instance of MyClass');
+				});
 
 			cy.get('@mountedElement').should('have.html', '<p>Hi there!</p>');
 		});
 
 		it('can get an instance from a child container', () => {
-			const renderPropsSpy = new RenderPropsSpy();
+			const renderPropsSpy = Sinon.stub().returns(null);
 			const childInstance = new MyClass();
 
 			const App = (
 				<ContainerContext>
 					<ContainerContextWithValue diKey={MyClass} value={childInstance}>
 						<SUT diKey={MyClass}>
-							{renderPropsSpy.render}
+							{renderPropsSpy}
 						</SUT>
 					</ContainerContextWithValue>
 				</ContainerContext>
@@ -81,13 +84,13 @@ describe('Injecting a dependency', () => {
 
 			mount(App);
 
-			cy.wrap(renderPropsSpy)
-				.its('firstProp')
-				.should('be.equal', childInstance);
+			cy.then(() => {
+				assert.ok(renderPropsSpy.firstCall.calledWith(childInstance));
+			});
 		});
 
 		it('can get an instance from a child container overriding the parent', () => {
-			const renderPropsSpy = new RenderPropsSpy();
+			const renderPropsSpy = Sinon.stub().returns(null);
 			const parentInstance = new MyClass();
 			const childInstance = new MyClass();
 
@@ -95,7 +98,7 @@ describe('Injecting a dependency', () => {
 				<ContainerContextWithValue diKey={MyClass} value={parentInstance}>
 					<ContainerContextWithValue diKey={MyClass} value={childInstance}>
 						<SUT diKey={MyClass}>
-							{renderPropsSpy.render}
+							{renderPropsSpy}
 						</SUT>
 					</ContainerContextWithValue>
 				</ContainerContextWithValue>
@@ -103,10 +106,9 @@ describe('Injecting a dependency', () => {
 
 			cy.mount(App);
 
-			cy.wrap(renderPropsSpy)
-				.its('firstProp')
-				.should('be.equal', childInstance)
-				.should('not.be.equal', parentInstance);
+			cy.then(() => {
+				assert.ok(renderPropsSpy.firstCall.calledWith(childInstance));
+			});
 		});
 
 		it.skip('can inject multiple values');
