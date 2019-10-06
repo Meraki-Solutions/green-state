@@ -29,12 +29,8 @@ export function fixReactDOMScope(win) {
   }
 }
 
-export * from './RenderPropsSpy';
-export * from './DeferredValue';
 export * from './ContainerContext';
 export * from './ContainerContextWithValue';
 export * from './ExternallyResolvablePromise';
-export * from './StateHistorySpy';
-export * from './StateRenderPropsSpy';
 export * from './ToggleChildrenComponent';
 export * from './mount';
