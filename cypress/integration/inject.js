@@ -118,10 +118,11 @@ describe('Injecting a dependency', () => {
 	describe('useInstance hook', () => {
 
 		it('can get an instance', () => {
-			const instance = new DeferredValue();
+			const instanceSpy = Sinon.spy();
 
 			const SUT = () => {
-				instance.set(useInstance(MyClass));
+				const instance = useInstance(MyClass);
+				instanceSpy(instance);
 				return null;
 			};
 
@@ -133,17 +134,18 @@ describe('Injecting a dependency', () => {
 
 			cy.mount(App);
 
-			cy.wrap(instance)
-				.its('value')
-				.should('be.instanceOf', MyClass);
+			cy.then(() => {
+				assert.ok(instanceSpy.firstCall.args[0] instanceof MyClass, 'expected spy to get called with an instance of MyClass');
+			});
 		});
 
 		it('can get an instance from a child container', () => {
-			const instance = new DeferredValue();
+			const instanceSpy = Sinon.spy();
 			const childInstance = new MyClass();
 
 			const SUT = () => {
-				instance.set(useInstance(MyClass));
+				const instance = useInstance(MyClass);
+				instanceSpy(instance);
 				return null;
 			};
 
@@ -157,18 +159,19 @@ describe('Injecting a dependency', () => {
 
 			cy.mount(App);
 
-			cy.wrap(instance)
-				.its('value')
-				.should('be.equal', childInstance);
+			cy.then(() => {
+				assert.ok(instanceSpy.firstCall.calledWith(childInstance));
+			});
 		});
 
 		it('can get an instance from a child container overriding the parent', () => {
-			const instance = new DeferredValue();
+			const instanceSpy = Sinon.spy();
 			const parentInstance = new MyClass();
 			const childInstance = new MyClass();
 
 			const SUT = () => {
-				instance.set(useInstance(MyClass));
+				const instance = useInstance(MyClass);
+				instanceSpy(instance);
 				return null;
 			};
 
@@ -180,10 +183,9 @@ describe('Injecting a dependency', () => {
 				</ContainerContextWithValue>
 			);
 
-			cy.wrap(instance)
-				.its('value')
-				.should('be.equal', childInstance)
-				.should('not.be.equal', parentInstance);
+			cy.then(() => {
+				assert.ok(instanceSpy.firstCall.calledWith(childInstance));
+			});
 		});
 
 	});
