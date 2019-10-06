@@ -4,12 +4,11 @@ import {
   DeferredValue,
   ExternallyResolvablePromise,
   StateHistorySpy,
-  StateRenderPropsSpy,
   ToggleChildrenComponent,
   mount
 } from '../support';
 import Sinon from 'sinon';
-import { StringState, State, Subscribe, useSubscription } from '../support/sut';
+import { State, Subscribe, useSubscription } from '../support/sut';
 
 describe('Subscribing to state', () => {
 
