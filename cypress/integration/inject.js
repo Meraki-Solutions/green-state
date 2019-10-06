@@ -1,6 +1,6 @@
 import React from 'react'
 import { Inject, useInstance, withDependencies } from '../support/sut';
-import { ContainerContext, ContainerContextWithValue, DeferredValue, RenderPropsSpy } from '../support';
+import { ContainerContext, ContainerContextWithValue } from '../support';
 import { fixReactDOMScope } from '../support';
 import Sinon from 'sinon';
 
@@ -193,10 +193,10 @@ describe('Injecting a dependency', () => {
   describe('withDependencies HOC', () => {
 
     it('can get an instance', () => {
-      const instance = new DeferredValue();
+			const instanceSpy = Sinon.spy();
 
       let SUT = ({ myInstance }) => {
-        instance.set(myInstance);
+        instanceSpy(myInstance);
         return null;
       };
       SUT = withDependencies({ myInstance: MyClass })(SUT);
@@ -209,17 +209,17 @@ describe('Injecting a dependency', () => {
 
       cy.mount(App);
 
-      cy.wrap(instance)
-        .its('value')
-        .should('be.instanceOf', MyClass);
+      cy.then(() => {
+        assert.ok(instanceSpy.firstCall.args[0] instanceof MyClass, 'expected spy to get called with an instance of MyClass');
+      });
     });
 
     it('can get an instance from a child container', () => {
-      const instance = new DeferredValue();
+      const instanceSpy = Sinon.spy();
       const childInstance = new MyClass();
 
       let SUT = ({ myInstance }) => {
-        instance.set(myInstance);
+        instanceSpy(myInstance);
         return null;
       };
       SUT = withDependencies({ myInstance: MyClass })(SUT);
@@ -234,18 +234,18 @@ describe('Injecting a dependency', () => {
 
       cy.mount(App);
 
-      cy.wrap(instance)
-        .its('value')
-        .should('be.equal', childInstance);
+      cy.then(() => {
+        assert.ok(instanceSpy.firstCall.calledWith(childInstance));
+      });
     });
 
     it('can get an instance from a child container overriding the parent', () => {
-      const instance = new DeferredValue();
+      const instanceSpy = Sinon.spy();
       const parentInstance = new MyClass();
       const childInstance = new MyClass();
 
       let SUT = ({ myInstance }) => {
-        instance.set(myInstance);
+        instanceSpy(myInstance);
         return null;
       };
       SUT = withDependencies({ myInstance: MyClass })(SUT);
@@ -260,10 +260,9 @@ describe('Injecting a dependency', () => {
 
       cy.mount(App);
 
-      cy.wrap(instance)
-        .its('value')
-        .should('be.equal', childInstance)
-        .should('not.be.equal', parentInstance);
+      cy.then(() => {
+        assert.ok(instanceSpy.firstCall.calledWith(childInstance));
+      });
     });
 
     it.skip('can inject multiple values');
