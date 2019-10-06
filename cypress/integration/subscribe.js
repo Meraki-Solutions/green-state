@@ -200,111 +200,89 @@ describe('Subscribing to state', () => {
   });
 
   describe('useSubscription hook', () => {
+    let state,
+        stateHistorySpy;
 
-    it('always gets undefined the first time because of hooks API', () => {
-      const state = new State();
-      const stateHistorySpy = new StateHistorySpy();
-
-      const SUT = () => {
-        const currentState = useSubscription(() => state);
-        stateHistorySpy.push(currentState);
-
-        return null;
-      };
-
-      cy.mount(<SUT />);
-
-      cy.wrap(stateHistorySpy)
-        .invoke('getMostRecentState')
-        .should('be.undefined');
-    });
+    beforeEach(() => {
+      state = new State();
+      stateHistorySpy = Sinon.spy();
+    })
 
     it('can get the initial value', () => {
-      const state = new State({ value: 'initial value' });
-      const stateHistorySpy = new StateHistorySpy();
+      state = new State({ value : 'initial value' });
 
-      const SUT = () => {
+      const TestComponent = () => {
         const currentState = useSubscription(() => state);
-        stateHistorySpy.push(currentState);
+        stateHistorySpy(currentState);
 
         return null;
       };
 
-      cy.mount(<SUT />);
+      cy.mount(<TestComponent />);
 
       cy.wrap(stateHistorySpy)
-        .invoke('getCount')
-        .should('equal', 2);
-
-      cy.wrap(stateHistorySpy)
-        .invoke('getMostRecentState')
-        .its('value')
-        .should('equal', 'initial value');
+        .its('callCount')
+        .should('equal', 2)
+        .then(() => {
+          // first render will be undefined because the sync nature of the hooks api makes it impractical to emit
+          // the initial value on first render
+          assert.equal(stateHistorySpy.getCall(0).args[0], undefined);
+          assert.deepEqual(stateHistorySpy.getCall(1).args[0], { value: 'initial value' });
+        })
     });
 
     it(`when getState is async, renders when it resolves`, () => {
-      const state = new State({ value: 'The async value' });
+      state = new State({ value: 'The async value' });
       const statePromise = new ExternallyResolvablePromise();
-      const stateHistorySpy = new StateHistorySpy();
 
-      const SUT = () => {
+      const TestComponent = () => {
         const currentState = useSubscription(() => statePromise);
-        stateHistorySpy.push(currentState);
+        stateHistorySpy(currentState);
 
         return null;
       };
 
-      cy.mount(<SUT />);
+      cy.mount(<TestComponent />);
 
       statePromise.resolve(state);
 
       cy.wrap(stateHistorySpy)
-        .invoke('getCount')
-        .should('equal', 2);
-
-      cy.wrap(stateHistorySpy)
-        .invoke('getMostRecentState')
-        .its('value')
-        .should('equal', 'The async value');
+        .its('callCount')
+        .should('equal', 2)
+        .then(() => {
+          assert.deepEqual(stateHistorySpy.getCall(1).args[0], { value: 'The async value' });
+        })
     });
 
     it(`renders when state changes`, () => {
-      const state = new State({ value: 'The async value' });
-      const stateHistorySpy = new StateHistorySpy();
-
-      const SUT = () => {
+      const TestComponent = () => {
         const currentState = useSubscription(() => state);
-        stateHistorySpy.push(currentState);
+        stateHistorySpy(currentState);
 
         return null;
       };
 
-      cy.mount(<SUT />);
+      cy.mount(<TestComponent />);
 
       state.setState({ value: 'Another value' });
 
       cy.wrap(stateHistorySpy)
-        .invoke('getCount')
-        .should('equal', 2);
-
-      cy.wrap(stateHistorySpy)
-        .invoke('getMostRecentState')
-        .its('value')
-        .should('equal', 'Another value');
+        .its('callCount')
+        .should('equal', 2) // would expect 3, but guessing some batching is causing 2
+        .then(() => {
+          assert.deepEqual(stateHistorySpy.getCall(1).args[0], { value: 'Another value' });
+        });
     });
 
     it(`unsubscribes on unmount`, () => {
-      const state = new State();
-
-      const SUT = () => {
+      const TestComponent = () => {
         useSubscription(() => state);
-
         return null;
       };
 
       const App = (
         <ToggleChildrenComponent>
-          <SUT />
+          <TestComponent />
         </ToggleChildrenComponent>
       );
 
