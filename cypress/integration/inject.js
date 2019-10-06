@@ -6,6 +6,33 @@ import { fixReactDOMScope } from '../support';
 // We only do identity checks, so doesn't need any properties
 class MyClass { }
 
+/**
+ * This class solves 2 problems
+ * 1. we need a way to find our dom element, so we give it an id
+ * 2. the top component we render must have a display name (a constraint of https://github.com/bahmutov/cypress-react-unit-test)
+ */
+class ReactUnitTestRoot extends React.Component {
+	render(){
+		return (
+			<div id="react-unit-test-root">
+				{this.props.children}
+			</div>
+		)
+	}
+}
+
+const mount = (children) => {
+	const App = (
+		<ReactUnitTestRoot>
+			{children}
+		</ReactUnitTestRoot>
+	);
+	cy.mount(App);
+
+	// return the dom element so that the consumer doesn't need to know what id we used
+	return cy.get('#react-unit-test-root');
+}
+
 describe('Injecting a dependency', () => {
 
 	// See https://github.com/bahmutov/cypress-react-unit-test/issues/51#issuecomment-494076389
@@ -30,7 +57,7 @@ describe('Injecting a dependency', () => {
 				</ContainerContext>
 			);
 
-			cy.mount(App);
+			mount(App).as('mountedElement');
 
 			cy.wrap(renderPropsSpy)
 				.its('firstProp')
@@ -53,7 +80,7 @@ describe('Injecting a dependency', () => {
 				</ContainerContext>
 			);
 
-			cy.mount(App);
+			mount(App);
 
 			cy.wrap(renderPropsSpy)
 				.its('firstProp')
