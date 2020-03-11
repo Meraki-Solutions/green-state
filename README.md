@@ -934,8 +934,6 @@ class App extends React.Component {
 - [ ] Document how to test state classes
 - [X] API Reference
 - [ ] Troubleshooting / Gotchas
-      - Accidental singletons in the root container shared across unrelated views (particularly problematic with state)
-      - DI hierarchy resolution, autoRegister, our custom container resolution strategy
       - Using key to force remount of Subscribe or prevent incorrect component re-use
 - [ ] DX Experience (debugging container, seeing all services)
 - [ ] Feedback
