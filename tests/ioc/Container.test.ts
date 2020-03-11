@@ -1,8 +1,15 @@
+// tslint:disable:max-line-length
 import { Container } from '../../src/ioc';
 import * as assert from 'assert';
 
 // tslint:disable max-classes-per-file
-class ServiceConfig {}
+class ServiceConfigLoader {}
+
+class ServiceConfig {
+  static inject = [ServiceConfigLoader];
+
+  constructor(public loader: ServiceConfigLoader) {}
+}
 
 class Service {
   static inject = [ServiceConfig];
@@ -34,6 +41,39 @@ describe('Container', () => {
 
       // It should have used the dependency we registered
       assert.ok(instance === childServiceConfig);
+      assert.ok(childContainer.hasResolver(ServiceConfig), 'Expected ServiceConfig to be registered in the child container and it was not');
+      assert.ok(!parentContainer.hasResolver(ServiceConfig), 'Expected ServiceConfig NOT to be registered in the child container and it was');
+    });
+
+    it('should resolve in the parent container if already registered in the parent container', () => {
+      const parentContainer = new Container();
+      const childContainer = parentContainer.createChild();
+      const config = new ServiceConfig(new ServiceConfigLoader());
+      parentContainer.registerInstance(ServiceConfig, config);
+
+      // Ask the child to resolve something that already exists in the parent
+      const instance = childContainer.get(ServiceConfig);
+
+      assert.ok(instance === config);
+      assert.ok(parentContainer.hasResolver(ServiceConfig), 'Expected ServiceConfig to be registered in the child container and it was not');
+      assert.ok(!childContainer.hasResolver(ServiceConfig), 'Expected ServiceConfig NOT to be registered in the child container and it was');
+    });
+
+    it('should resolve self and deps in the child container if its not already registered anywhere in the hierarchy', () => {
+      const parentContainer = new Container();
+      const childContainer = parentContainer.createChild();
+
+      childContainer.get(Service);
+
+      // Service + Deps be registered in the child container and NOT the parent
+      assert.ok(childContainer.hasResolver(Service), 'Expected Service to be registered in the child container and it was not');
+      assert.ok(!parentContainer.hasResolver(Service), 'Expected Service NOT to be registered in the parent container and it was');
+
+      assert.ok(childContainer.hasResolver(ServiceConfig), 'Expected ServiceConfig to be registered in the child container and it was not');
+      assert.ok(!parentContainer.hasResolver(ServiceConfig), 'Expected ServiceConfig NOT to be registered in the parent container and it was');
+
+      assert.ok(childContainer.hasResolver(ServiceConfigLoader), 'Expected ServiceConfigLoader to be registered in the child container and it was not');
+      assert.ok(!parentContainer.hasResolver(ServiceConfigLoader), 'Expected ServiceConfigLoader NOT to be registered in the parent container and it was');
     });
 
     it('should resolve in the child container if it has a dependency that is already in the child container', () => {
@@ -69,18 +109,6 @@ describe('Container', () => {
       assert.ok(instance !== parentServiceConfig);
     });
 
-    it('should resolve in the parent container if the request key has a dependency in the parent container', () => {
-      const parentContainer = new Container();
-      const childContainer = parentContainer.createChild();
-      const config = new ServiceConfig();
-      parentContainer.registerInstance(ServiceConfig, config);
-
-      // Ask the child to resolve something that already exists in the parent
-      const instance = childContainer.get(ServiceConfig);
-
-      assert.ok(instance === config);
-    });
-
     it('Should resolve with dep from the child container but still get a dep from the root container', () => {
 
       class RootService {}
@@ -104,8 +132,16 @@ describe('Container', () => {
       // child.autoRegister(ServiceWithChildAndRootDeps);
       const service = child.get(ServiceWithChildAndRootDeps);
 
+      assert.ok(child.hasResolver(ServiceWithChildAndRootDeps), 'Expected ServiceWithChildAndRootDeps to be registered in child container');
+      assert.ok(!parent.hasResolver(ServiceWithChildAndRootDeps), 'Expected ServiceWithChildAndRootDeps NOT to be registered in parent container');
+
       assert.ok(service.childService === childInstance, 'Expected childService to come from child container');
+      assert.ok(child.hasResolver(ChildService), 'Expected ChildService to be registered in child container');
+      assert.ok(!parent.hasResolver(ChildService), 'Expected ChildService NOT to be registered in parent container');
+
       assert.ok(service.rootService === rootInstance, 'Expected rootService to come from root container');
+      assert.ok(!child.hasResolver(RootService), 'Expected RootService to be registered in parent container');
+      assert.ok(parent.hasResolver(RootService), 'Expected RootService NOT to be registered in child container');
     });
 
     it('Should resolve with dep from the parent container and a dep from the root/grandparent container', () => {
@@ -132,6 +168,22 @@ describe('Container', () => {
 
       assert.ok(service.parentService === parentInstance, 'Expected ParentService from parent');
       assert.ok(service.grandParentService === grandParentInstance, 'Expected GrandParentService from grandparent');
+    });
+
+    it('Should resolve in child container with dep of a dep from the parent container', () => {
+      const parent = new Container();
+      const child = parent.createChild();
+
+      parent.autoRegister(ServiceConfigLoader);
+
+      child.get(Service);
+
+      assert.ok(child.hasResolver(Service), 'Expected Service to be registered in child container');
+      assert.ok(!parent.hasResolver(Service), 'Expected Service NOT to be registered in parent container');
+      assert.ok(child.hasResolver(ServiceConfig), 'Expected ServiceConfig to be registered in child container');
+      assert.ok(!parent.hasResolver(ServiceConfig), 'Expected ServiceConfig NOT to be registered in parent container');
+      assert.ok(parent.hasResolver(ServiceConfigLoader), 'Expected ServiceConfigLoader to be registered in parent container');
+      assert.ok(!child.hasResolver(ServiceConfigLoader), 'Expected ServiceConfigLoader NOT to be registered in child container');
     });
 
   });

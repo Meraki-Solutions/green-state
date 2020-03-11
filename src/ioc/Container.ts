@@ -42,19 +42,17 @@ export class Container {
 
     if (this.debug) {
       // tslint:disable-next-line no-console
-      console.log(JSON.stringify({
-        depth: this.getContainerDepth(this),
-        key: key.name,
-        depGraph: (function recursivelyFormatDepGraph(nodes) {
+      console.log(JSON.stringify(
+        (function recursivelyFormatDepGraph(nodes) {
           return nodes.map(
-            ({ key: _key, resolvingContainer, deps }) => ({
+            ({ key: _key, resolvingContainer, getDeps }) => ({
               keyName: _key.name,
-              depth: this.getContainerDepth(resolvingContainer),
-              deps: recursivelyFormatDepGraph(deps)
+              hasResolvingContainer: Boolean(resolvingContainer),
+              deps: recursivelyFormatDepGraph(getDeps())
             })
           );
-        })(depGraph)
-      }, null, 2));
+        })(depGraph)[0]
+      , null, 2));
     }
 
     this.autoRegisterDependencies(depGraph);
@@ -70,14 +68,11 @@ export class Container {
     const recursivelyBuildGraph = (keys) => {
       return keys.map(
         _key => {
-          const resolvingContainer = this.getContainerWithResolver(_key);
-          const isResolvedSingleton = this.isAlreadyResolvedSingleton({ key: _key, container: resolvingContainer });
           return {
             key: _key,
-            resolvingContainer,
-            isResolvedSingleton,
-            // Dont look any further in the graph
-            deps: isResolvedSingleton ? [] : recursivelyBuildGraph(getDependencies(_key))
+            resolvingContainer: this.getContainerWithResolver(_key),
+            // We may not want to actually traverse these deps, so don't build them until asked
+            getDeps: () => recursivelyBuildGraph(getDependencies(_key)),
           };
         }
       );
@@ -94,53 +89,16 @@ export class Container {
     const recursivelyAutoRegister = (nodes) => {
       nodes.forEach(
         node => {
-          if (node.isResolvedSingleton) {
+          if (node.resolvingContainer) {
             return;
           }
 
-          if (node.deps.length === 0) {
-            return;
-          }
-
-          const nodeContainerDepth = this.getContainerDepth(node.resolvingContainer);
-          const { depth: deepestDependencyDepth, deepest } = this.getDeepestDependency(node);
-          if (deepestDependencyDepth > nodeContainerDepth) {
-            deepest.resolvingContainer.autoRegister(node.key);
-          }
-          recursivelyAutoRegister(node.deps);
+          this.autoRegister(node.key);
+          recursivelyAutoRegister(node.getDeps());
         }
       );
     };
     (recursivelyAutoRegister)(depGraph);
-  }
-
-  private getFlatDependencies = node => {
-    return (function recursivelyGetFlatDependencies(nodes, all) {
-      nodes.forEach(
-        _node => {
-          all.push(_node);
-          recursivelyGetFlatDependencies(_node.deps, all);
-        }
-      );
-      return all;
-    })(node.deps, []);
-  }
-
-  private getDeepestDependency = node => {
-    const flatDependencies = this.getFlatDependencies(node);
-    let depth;
-    let deepest;
-    flatDependencies.forEach(
-      depNode => {
-        const depDepth = this.getContainerDepth(depNode.resolvingContainer);
-        if (!depth || depDepth > depth) {
-          depth = depDepth;
-          deepest = depNode;
-        }
-      }
-    );
-
-    return { depth, deepest };
   }
 
   private getContainerWithResolver = key => {
@@ -158,18 +116,6 @@ export class Container {
   }
 
   hasResolver = key => this.wrappedContainer.hasResolver(key);
-
-  private getContainerDepth = container => {
-    let depth = 0;
-    let currentContainer = container;
-
-    while (currentContainer && currentContainer.parent) {
-      depth++;
-      currentContainer = currentContainer.parent;
-    }
-
-    return depth;
-  }
 
   /**
    * Ensure createChild returns an instance of our new Container and not the base container
