@@ -34,7 +34,7 @@
     "assert": "^1.4.1",
     "cypress": "^3.4.1",
     "cypress-react-unit-test": "^2.4.3",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "react": "^16.10.1",
     "react-dom": "^16.10.1",
     "sinon": "^7.5.0",
