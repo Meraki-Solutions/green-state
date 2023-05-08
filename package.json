@@ -4,8 +4,8 @@
   "description": "GreenState is a composable state management library for Javascript Apps with first-class support for IoC. It helps you write complex applications that can evolve in a sustainable way as requirements change by encapsulating state so it is easy to reason about what parts of the system would be impacted by a given change. It also encourages composition by providing a set of small re-usable units that can be combined in a variety of different ways.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
-  "repository": "https://github.com/symbioticlabs/green-state",
-  "homepage": "https://symbioticlabs.github.io/green-state",
+  "repository": "https://github.com/meraki-solutions/green-state",
+  "homepage": "https://meraki-solutions.github.io/green-state",
   "scripts": {
     "test": "TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register tests/**/*.test.ts",
     "test:watch": "TS_NODE_PROJECT=tsconfig.test.json mocha -r ts-node/register --watch --watch-extensions ts,tsx tests/**/*.test.ts",
@@ -25,7 +25,7 @@
     "di",
     "dependency injection"
   ],
-  "author": "Symbiotic Labs <team@symbioticlabs.io> (https://www.symbioticlabs.io)",
+  "author": "Meraki Solutions <team@meraki.inc> (https://meraki.inc)",
   "license": "MIT",
   "devDependencies": {
     "@types/mocha": "^5.2.7",

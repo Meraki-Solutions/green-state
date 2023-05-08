@@ -4,7 +4,7 @@ GreenState is a composable state management library for Javascript Apps with fir
 
 You can use GreenState with React using the provided bindings, or you could easily write a few small adapters to use it with any other view library.
 
-For a full reference of GreenState's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
+For a full reference of GreenState's API please visit [https://meraki-solutions.github.io/green-state/](https://meraki-solutions.github.io/green-state/)
 
 ## Table of Contents
 
@@ -45,7 +45,7 @@ npm install --save @symbiotic/green-state
 
 ## API Reference
 
-For a full reference of GreenState's API please visit [https://symbioticlabs.github.io/green-state/](https://symbioticlabs.github.io/green-state/)
+For a full reference of GreenState's API please visit [https://meraki-solutions.github.io/green-state/](https://meraki-solutions.github.io/green-state/)
 
 ## State Objects
 
